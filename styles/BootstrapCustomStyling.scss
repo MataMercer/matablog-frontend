@@ -1,0 +1,24 @@
+.btn {
+  border-radius: 3em;
+  transition: all 0.3s ease 0s;
+  padding-left: 1.2em;
+  padding-right: 1.2em;
+}
+
+.modal-content {
+  border-radius: 0;
+  padding: 1em;
+}
+
+.modal-header {
+  border-bottom: none;
+}
+
+.badge {
+  margin-right: 0.4em;
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+  padding: 0.5em;
+  font-size: small;
+  border-radius: 0;
+}

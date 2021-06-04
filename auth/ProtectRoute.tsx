@@ -11,7 +11,6 @@ export default function ProtectRoute(
 ): React.FC<ProtectRouteProps> {
   return (...args) => {
     const { isAuthenticated, loading } = useAuth();
-
     useEffect(() => {
       if (!isAuthenticated && !loading) Router.push('/login');
     }, [isAuthenticated]);

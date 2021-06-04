@@ -6,45 +6,6 @@ import { useRouter } from 'next/router';
 import { useAuth } from '../auth/auth';
 import ThemeToggler from './ThemeToggler';
 
-const NavBar = () => {
-  const router = useRouter();
-  const { isAuthenticated } = useAuth();
-
-  return (
-    <header>
-      <Link href="/">
-        <div className="navbar-brand">
-          <img
-            className="navbar-brand-image"
-            src="/icon.png"
-            alt="Mercer Denholm Logo"
-          />
-          <span className="navbar-brand-text">MataBlog</span>
-        </div>
-      </Link>
-
-      <nav>
-        <ul className="navbar-items">
-          <li>
-            <ThemeToggler />
-          </li>
-          <li
-            className={`navbar-item ${
-              router.pathname === '/' ? 'navbar-item-active' : ''
-            }`}
-          >
-            <Link href="/">
-              <a>Posts</a>
-            </Link>
-          </li>
-        </ul>
-
-        {isAuthenticated ? <AuthenticatedMenu /> : <UnauthenticatedMenu />}
-      </nav>
-    </header>
-  );
-};
-
 const AuthenticatedMenu = () => {
   const { logout } = useAuth();
   const router = useRouter();
@@ -53,10 +14,10 @@ const AuthenticatedMenu = () => {
     <ul className="navbar-items">
       <li
         className={`navbar-item ${
-          router.pathname === '/admindashboard' ? 'navbar-item-active' : ''
+          router.pathname === '/settings' ? 'navbar-item-active' : ''
         }`}
       >
-        <Link href="/admindashboard">
+        <Link href="/settings">
           <a>Settings</a>
         </Link>
       </li>
@@ -84,4 +45,43 @@ const UnauthenticatedMenu = () => {
     </ul>
   );
 };
+
+const NavBar = () => {
+  const router = useRouter();
+  const { isAuthenticated, user } = useAuth();
+
+  return (
+    <header>
+      <nav>
+        <Link href="/">
+          <div className="navbar-brand">
+            <img
+              className="navbar-brand-image"
+              src="/icon.png"
+              alt="Mercer Denholm Logo"
+            />
+            <span className="navbar-brand-text">MataBlog</span>
+          </div>
+        </Link>
+        <ul className="navbar-items">
+          <li>
+            <ThemeToggler />
+          </li>
+          <li
+            className={`navbar-item ${
+              router.pathname === '/' ? 'navbar-item-active' : ''
+            }`}
+          >
+            <Link href="/">
+              <a>{user ? user.username : 'null'}</a>
+            </Link>
+          </li>
+        </ul>
+
+        {isAuthenticated ? <AuthenticatedMenu /> : <UnauthenticatedMenu />}
+      </nav>
+    </header>
+  );
+};
+
 export default NavBar;

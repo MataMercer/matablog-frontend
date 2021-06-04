@@ -16,7 +16,7 @@ import {
 import Layout from '../components/Layout';
 import ProtectRoute from '../auth/ProtectRoute';
 
-function AdminDashboard() {
+function Settings() {
   const [activeTab, setActiveTab] = useState<string>('1');
 
   const toggle = (tab: string) => {
@@ -25,9 +25,9 @@ function AdminDashboard() {
 
   return (
     <div>
-      <Layout title="Admin Dashboard">dashboard</Layout>
+      <Layout title="Settings">Settingss</Layout>
     </div>
   );
 }
 
-export default ProtectRoute(AdminDashboard);
+export default ProtectRoute(Settings);

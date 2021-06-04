@@ -21,7 +21,7 @@
 body {
   font-family: 'Open Sans', 'SF Pro Icons', 'Helvetica', 'Arial', sans-serif;
   font-size: larger;
-  background-color: $background-color;
+  background-color: $page-color-darker-1;
   // padding: 20px 20px 60px;
   // max-width: 680px;
   // margin: 0 auto;
@@ -46,10 +46,10 @@ hr {
 }
 
 .content {
+  background-color: $page-color;
   max-width: 50em;
   margin: 0 auto;
   padding: 0.5em;
-  background-color: $page-color;
 }
 
 //   p{
@@ -339,6 +339,9 @@ body.dark-theme {
     // color: #9292fa;
     color: #ff73dc;
   }
+  .content {
+    background-color: $black-color-lighter-1;
+  }
   .navbar-items {
     li {
       a {
@@ -364,24 +367,28 @@ body.dark-theme {
   }
 
   input {
-    background-color: $black-color-lighter-1;
+    background-color: $black-color-lighter-2;
     color: $page-color;
   }
   select {
-    background-color: $black-color-lighter-1;
+    background-color: $black-color-lighter-2;
     color: $page-color;
   }
   textarea {
-    background-color: $black-color-lighter-1;
+    background-color: $black-color-lighter-2;
     border: none;
     color: $page-color;
   }
   textarea:focus {
-    background-color: $black-color-lighter-1;
+    background-color: $black-color-lighter-2;
     color: $page-color;
   }
   input:focus {
-    background-color: $black-color-lighter-1;
+    background-color: $black-color-lighter-2;
+    color: $page-color;
+  }
+  input:active {
+    background-color: $black-color-lighter-2;
     color: $page-color;
   }
   input {

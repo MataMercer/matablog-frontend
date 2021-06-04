@@ -1,21 +1,20 @@
+// eslint-disable-next-line no-use-before-define
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import Router from 'next/router';
 // eslint-disable-next-line no-unused-vars
-import { IUser } from '../modelTypes/interfaces';
 import axios from 'axios';
-import {
-  setAccessToken,
-  getAccessToken,
-  clearTokens,
-  setRefreshToken,
-} from '../backend/config/AxiosConfig';
+import { User } from '../modelTypes/User';
+import useAuthToken from './useAuthToken';
+import useAxiosConfig from './useAxiosConfig';
+import { RequestStatus } from '../modelTypes/RequestStatus';
 
 type AuthContextProps = {
   login: (username: string, password: string) => Promise<any>;
   logout: () => void;
   loading: boolean;
+  loginStatus: RequestStatus;
   isAuthenticated: boolean;
-  user: IUser | null;
+  user: User | null;
 };
 
 const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
@@ -25,49 +24,47 @@ type AuthProviderProps = {
 };
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<IUser | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
+  const [loadUserStatus, setLoadUserStatus] =
+    useState<RequestStatus>('loading');
+  const [loginStatus, setLoginStatus] = useState<RequestStatus>('idle');
+
+  const loading = loadUserStatus === 'loading';
+  const [accessToken, refreshToken, setAccessToken, setRefreshToken] =
+    useAuthToken();
+
+  useAxiosConfig();
+
   useEffect(() => {
     async function loadUser() {
-      // // observer to check if the user is logged in
-      // auth?.onAuthStateChanged((userObservation: firebase.User | null) => {
-      //   if (userObservation) {
-      //     // User is signed in.
-      //     setUser(userObservation);
-      //   } else {
-      //     setUser(null);
-      //   }
-      // });
-      // setLoading(false);
-
-      if (getAccessToken()) {
-        axios({
-          method: 'get',
-          url: '/currentuser',
-          headers: {
-            authorization: getAccessToken(),
-          },
+      console.log(accessToken);
+      axios({
+        method: 'get',
+        url: '/currentuser',
+        headers: {
+          Authorization: accessToken,
+        },
+      })
+        .then((response) => {
+          console.log(response);
+          const userRes: User = {
+            username: response.data,
+          };
+          setUser(userRes);
+          setLoadUserStatus('succeeded');
         })
-          .then((response) => {
-            console.log(response);
-            const user: IUser = {
-              username: response.data,
-            };
-            setUser(user);
-            setLoading(false);
-          })
-          .catch((ex) => {
-            console.log(ex);
-            setUser(null);
-            setLoading(false);
-          });
-      }
+        .catch((ex) => {
+          console.log(ex);
+          setUser(null);
+          setLoadUserStatus('errored');
+        });
     }
     loadUser();
-  }, []);
+  }, [accessToken]);
 
   const redirectAfterLogin = () => {
-    Router.push('/admindashboard');
+    console.log('redirecting to settings');
+    Router.push('/settings');
   };
 
   const redirectAfterLogout = () => {
@@ -81,23 +78,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     };
 
     console.log(data);
-    // return fetch('https://localhost:8443/login', {
-    //   method: 'post',
-    //   mode: 'cors',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(data),
-    // }).then((response) => {
-    //   console.log(response);
-    //   if (response.ok) {
-    //     const token = response.headers.get('Authorization');
-    //     if (token) {
-    //       Cookies.set('token', token);
-    //     }
-    //     redirectAfterLogin();
-    //   }
-    // });
     return axios({
       method: 'POST',
       url: '/login',
@@ -110,10 +90,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         console.log(response);
         setAccessToken(response.headers.authorization);
         setRefreshToken(response.headers.refreshToken);
+        setLoginStatus('succeeded');
         redirectAfterLogin();
       })
       .catch((response) => {
         console.log(response);
+        setLoginStatus('errored');
       });
   };
 
@@ -128,14 +110,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     //   .catch((error: FirebaseError) => {
     //     // An error happened.
     //   });
-    clearTokens();
+    setAccessToken('');
+    setRefreshToken('');
     setUser(null);
-    redirectAfterLogout();
   };
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated: !!user, user, login, loading, logout }}
+      value={{
+        isAuthenticated: !!user,
+        user,
+        login,
+        loading,
+        loginStatus,
+        logout,
+      }}
     >
       {children}
     </AuthContext.Provider>

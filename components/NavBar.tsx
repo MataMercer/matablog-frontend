@@ -53,17 +53,17 @@ const NavBar = () => {
   return (
     <header>
       <nav>
-        <Link href="/">
-          <div className="navbar-brand">
-            <img
-              className="navbar-brand-image"
-              src="/icon.png"
-              alt="Mercer Denholm Logo"
-            />
-            <span className="navbar-brand-text">MataBlog</span>
-          </div>
-        </Link>
         <ul className="navbar-items">
+          <Link href="/">
+            <div className="navbar-brand">
+              <img
+                className="navbar-brand-image"
+                src="/icon.png"
+                alt="Mercer Denholm Logo"
+              />
+              <span className="navbar-brand-text">MataBlog</span>
+            </div>
+          </Link>
           <li>
             <ThemeToggler />
           </li>

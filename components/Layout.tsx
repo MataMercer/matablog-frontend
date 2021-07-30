@@ -1,8 +1,7 @@
+import React from 'react';
 import Head from 'next/head';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLinkedin, faGithub } from '@fortawesome/free-brands-svg-icons';
 import NavBar from './NavBar';
-import ThemeToggler from './ThemeToggler';
+import Footer from './Footer';
 
 type LayoutProps = {
   title: string;
@@ -10,7 +9,7 @@ type LayoutProps = {
 };
 
 const Layout = ({ children, title }: LayoutProps) => (
-  <div className="layout">
+  <div className="bg-indigo-200">
     <Head>
       <title>{`${title} - Mercer Denholm Portfolio`}</title>
       <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
@@ -21,25 +20,12 @@ const Layout = ({ children, title }: LayoutProps) => (
       />
     </Head>
 
-    <div className="content">
-      <div className="article-nav-container">
-        <NavBar />
-
-        <main>
-          <article>{children}</article>
-        </main>
-      </div>
-      <footer>
-        <ul>
-          <li>
-            <a href="https://github.com/MataMercer">
-              <FontAwesomeIcon icon={faGithub} /> Github
-            </a>
-          </li>
-        </ul>
-
-        <p>© {new Date().getFullYear()} Mercer Denholm</p>
-      </footer>
+    <div>
+      <NavBar />
+      <main className="col-span-8 bg-white">
+        <article>{children}</article>
+      </main>
+      <Footer />
     </div>
   </div>
 );

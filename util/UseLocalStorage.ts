@@ -4,9 +4,11 @@ const useLocalStorage = (key: string) => {
   const [value, setValue] = useState();
 
   useEffect(() => {
-    setValue(
-      (localStorage.getItem(key) as string).replace(/^"(.*)"$/, '$1') as any
-    );
+    if (localStorage.getItem(key)) {
+      setValue(
+        (localStorage.getItem(key) as string).replace(/^"(.*)"$/, '$1') as any
+      );
+    }
   }, []);
 
   useEffect(() => {

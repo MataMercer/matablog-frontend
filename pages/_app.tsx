@@ -1,4 +1,3 @@
-import '../styles/main.scss';
 // eslint-disable-next-line no-unused-vars
 import type { AppProps } from 'next/app';
 import { AuthProvider } from '../auth/auth';

@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { ReactSVG } from 'react-svg';
 import { useAuth } from '../auth/auth';
 import ThemeToggler from './ThemeToggler';
 
@@ -11,7 +12,7 @@ const AuthenticatedMenu = () => {
   const router = useRouter();
 
   return (
-    <ul className="navbar-items">
+    <>
       <li
         className={`navbar-item ${
           router.pathname === '/settings' ? 'navbar-item-active' : ''
@@ -24,7 +25,7 @@ const AuthenticatedMenu = () => {
       <li className="navbar-item" onClick={logout}>
         <a>Logout</a>
       </li>
-    </ul>
+    </>
   );
 };
 
@@ -32,17 +33,13 @@ const UnauthenticatedMenu = () => {
   const router = useRouter();
 
   return (
-    <ul className="navbar-items">
-      <li
-        className={`navbar-item ${
-          router.pathname === '/login' ? 'navbar-item-active' : ''
-        }`}
-      >
+    <>
+      <li className="col-span-1">
         <Link href="/login">
           <a>Login</a>
         </Link>
       </li>
-    </ul>
+    </>
   );
 };
 
@@ -51,34 +48,32 @@ const NavBar = () => {
   const { isAuthenticated, user } = useAuth();
 
   return (
-    <header>
+    <header className="bg-white shadow-md z-50">
       <nav>
-        <ul className="navbar-items">
-          <Link href="/">
-            <div className="navbar-brand">
-              <img
-                className="navbar-brand-image"
-                src="/icon.png"
-                alt="Mercer Denholm Logo"
-              />
-              <span className="navbar-brand-text">MataBlog</span>
-            </div>
-          </Link>
-          <li>
+        <ul className="grid gap-4 grid-cols-12">
+          <li className="col-span-3">
+            <Link href="/">
+              <div className="flex">
+                <ReactSVG
+                  className="w-12"
+                  src="/matamercerlogo2020.svg"
+                  loading={() => <span>Loading</span>}
+                  wrapper="div"
+                />
+                <span className="flex-grow">MataBlog</span>
+              </div>
+            </Link>
+          </li>
+          <li className="col-span-1">
             <ThemeToggler />
           </li>
-          <li
-            className={`navbar-item ${
-              router.pathname === '/' ? 'navbar-item-active' : ''
-            }`}
-          >
+          <li className="col-span-3">
             <Link href="/">
               <a>{user ? user.username : 'null'}</a>
             </Link>
           </li>
+          {isAuthenticated ? <AuthenticatedMenu /> : <UnauthenticatedMenu />}
         </ul>
-
-        {isAuthenticated ? <AuthenticatedMenu /> : <UnauthenticatedMenu />}
       </nav>
     </header>
   );

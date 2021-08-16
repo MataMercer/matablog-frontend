@@ -1,82 +1,143 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { ReactSVG } from 'react-svg';
-import { useAuth } from '../auth/auth';
+import { useAuth } from '../auth/AuthContext';
+import styled from 'styled-components';
+import { User } from '../modelTypes/User';
 import ThemeToggler from './ThemeToggler';
+import {
+  faUser,
+  faBars,
+  faBell,
+  faEnvelope,
+  faEllipsisH,
+  faSearch,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  DropdownButton,
+  Dropdown,
+  Button,
+  InputGroup,
+  FormControl,
+} from 'react-bootstrap';
+import React from 'react';
 
-const AuthenticatedMenu = () => {
+const Nav = styled.nav`
+  font-family: Arial, sans-serif;
+  box-shadow: 0 1px 8px 1px rgba(0, 0, 0, 0.3);
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
+  padding: 15px 20px;
+  z-index: 999;
+  position: relative;
+`;
+const NavList = styled.ul`
+  list-style: none;
+  display: flex;
+  justify-content: space-around;
+`;
+const NavItem = styled.li``;
+const Brand = styled.a`
+  display: flex;
+  cursor: pointer;
+`;
+const BrandImage = styled.img`
+  width: 2.5em;
+`;
+const H1 = styled.h1`
+  font-weight: 900;
+  font-size: 20px;
+  line-height: 1;
+  margin: 6px 0 6px 10px;
+  color: ${({ theme }) => theme.colors.primary};
+`;
+
+interface AuthenticatedMenuProps {
+  user: User | null;
+}
+const AuthenticatedMenu: React.FC<AuthenticatedMenuProps> = ({ user }) => {
   const { logout } = useAuth();
   const router = useRouter();
 
   return (
     <>
-      <li
-        className={`navbar-item ${
-          router.pathname === '/settings' ? 'navbar-item-active' : ''
-        }`}
+      <DropdownButton
+        id="dropdown-basic-button"
+        title={user?.username}
+        variant="link"
       >
-        <Link href="/settings">
-          <a>Settings</a>
-        </Link>
-      </li>
-      <li className="navbar-item" onClick={logout}>
-        <a>Logout</a>
-      </li>
+        <Dropdown.Item href="#/action-1">Profile</Dropdown.Item>
+        <Dropdown.Item href="#/action-2">Settings</Dropdown.Item>
+        <Dropdown.Item href="#/action-3">Logout</Dropdown.Item>
+      </DropdownButton>
     </>
   );
 };
 
 const UnauthenticatedMenu = () => {
-  const router = useRouter();
-
   return (
     <>
       <li className="col-span-1">
         <Link href="/login">
-          <a>Login</a>
+          <Button>
+            <a>Login</a>
+          </Button>
         </Link>
       </li>
     </>
   );
 };
 
-const NavBar = () => {
-  const router = useRouter();
-  const { isAuthenticated, user } = useAuth();
-
+const Search: React.FC<{ className?: string }> = ({ className }) => {
   return (
-    <header className="bg-white shadow-md z-50">
-      <nav>
-        <ul className="grid gap-4 grid-cols-12">
-          <li className="col-span-3">
-            <Link href="/">
-              <div className="flex">
-                <ReactSVG
-                  className="w-12"
-                  src="/matamercerlogo2020.svg"
-                  loading={() => <span>Loading</span>}
-                  wrapper="div"
-                />
-                <span className="flex-grow">MataBlog</span>
-              </div>
-            </Link>
-          </li>
-          <li className="col-span-1">
-            <ThemeToggler />
-          </li>
-          <li className="col-span-3">
-            <Link href="/">
-              <a>{user ? user.username : 'null'}</a>
-            </Link>
-          </li>
-          {isAuthenticated ? <AuthenticatedMenu /> : <UnauthenticatedMenu />}
-        </ul>
-      </nav>
-    </header>
+    <InputGroup className={className}>
+      <DropdownButton
+        variant="outline-secondary"
+        title="Post Category"
+        id="input-group-dropdown-1"
+      >
+        <Dropdown.Item href="#">All</Dropdown.Item>
+        <Dropdown.Item href="#">Media</Dropdown.Item>
+        <Dropdown.Item href="#">Replies</Dropdown.Item>
+        <Dropdown.Item href="#">Something else here</Dropdown.Item>
+      </DropdownButton>
+      <FormControl aria-label="Text input with dropdown button" />
+      <Button>
+        <FontAwesomeIcon icon={faSearch} />
+      </Button>
+    </InputGroup>
   );
 };
 
-export default NavBar;
+const StyledSearch = styled(Search)`
+  width: 35em;
+`;
+
+export const NavBar: React.FC<{}> = ({}) => {
+  const { isAuthenticated, user } = useAuth();
+  return (
+    <header>
+      <Nav>
+        <Link href="/">
+          <Brand>
+            <BrandImage src="/matamercerlogo2020.svg" />
+            <H1>MataBlog</H1>
+          </Brand>
+        </Link>
+        <StyledSearch />
+        <NavList>
+          <NavItem></NavItem>
+          <NavItem>
+            <ThemeToggler />
+          </NavItem>
+          {isAuthenticated ? (
+            <AuthenticatedMenu user={user} />
+          ) : (
+            <UnauthenticatedMenu />
+          )}
+        </NavList>
+      </Nav>
+    </header>
+  );
+};

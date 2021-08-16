@@ -1,15 +1,20 @@
 import React from 'react';
 import Head from 'next/head';
-import NavBar from './NavBar';
+import { NavBar } from './NavBar';
 import Footer from './Footer';
+import styled from 'styled-components';
 
 type LayoutProps = {
   title: string;
   children: React.ReactNode;
 };
 
+const Article = styled.article`
+  margin: 3em 20em 10em;
+`;
+
 const Layout = ({ children, title }: LayoutProps) => (
-  <div className="bg-indigo-200">
+  <div>
     <Head>
       <title>{`${title} - Mercer Denholm Portfolio`}</title>
       <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
@@ -21,9 +26,12 @@ const Layout = ({ children, title }: LayoutProps) => (
     </Head>
 
     <div>
-      <NavBar />
-      <main className="col-span-8 bg-white">
-        <article>{children}</article>
+      <header>
+        <NavBar />
+      </header>
+
+      <main>
+        <Article>{children}</Article>
       </main>
       <Footer />
     </div>

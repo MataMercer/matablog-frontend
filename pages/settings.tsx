@@ -1,18 +1,4 @@
 import React, { useState } from 'react';
-import Link from 'next/link';
-import {
-  Button,
-  Input,
-  TabContent,
-  TabPane,
-  Nav,
-  NavItem,
-  NavLink,
-  Card,
-  CardTitle,
-  Row,
-  Col,
-} from 'reactstrap';
 import Layout from '../components/Layout';
 import ProtectRoute from '../auth/ProtectRoute';
 

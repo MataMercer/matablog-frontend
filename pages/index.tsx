@@ -7,6 +7,7 @@ export default function Home() {
       <Layout title="Home">
         <section>
           <h1>Timeline</h1>
+          <p>fsoijiofsdj os</p>
         </section>
       </Layout>
     </div>

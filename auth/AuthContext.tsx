@@ -1,20 +1,35 @@
 // eslint-disable-next-line no-use-before-define
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  useCallback,
+} from 'react';
 import Router from 'next/router';
 // eslint-disable-next-line no-unused-vars
 import axios from 'axios';
 import { User } from '../modelTypes/User';
-import useAuthToken from './useAuthToken';
-import useAxiosConfig from './useAxiosConfig';
+import useAuthToken from '../backend/hooks/useAuthToken';
+import useAxiosConfig from '../backend/hooks/useAxiosConfig';
 import { RequestStatus } from '../modelTypes/RequestStatus';
+import useGenericRequest from '../backend/hooks/util/useGenericRequest';
+import {
+  getCurrentUserRequest,
+  loginRequest,
+} from '../backend/repositories/UserRepository';
+import { ILoginForm } from '../modelTypes/formTypes/loginForm';
+import { ApiError } from '../modelTypes/ApiError';
+import { AuthTokens } from '../modelTypes/AuthTokens';
 
 type AuthContextProps = {
-  login: (username: string, password: string) => Promise<any>;
+  login: (loginForm: ILoginForm) => void;
   logout: () => void;
   loading: boolean;
   loginStatus: RequestStatus;
   isAuthenticated: boolean;
   user: User | null;
+  loginError?: ApiError;
 };
 
 const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
@@ -27,43 +42,37 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loadUserStatus, setLoadUserStatus] =
     useState<RequestStatus>('loading');
-  const [loginStatus, setLoginStatus] = useState<RequestStatus>('idle');
-
   const loading = loadUserStatus === 'loading';
-  const [accessToken, refreshToken, setAccessToken, setRefreshToken] =
+  const { accessToken, refreshToken, setAccessToken, setRefreshToken } =
     useAuthToken();
+
+  const [loginStatus, setLoginStatus] = useState<RequestStatus>('idle');
+  const [loginError, setLoginError] = useState<ApiError>();
+
+  const [currentUserStatus, setCurrentUserStatus] =
+    useState<RequestStatus>('idle');
+  const [currentUserError, setCurrentUserError] = useState<ApiError>();
 
   useAxiosConfig();
 
   useEffect(() => {
     async function loadUser() {
-      console.log(accessToken);
-      axios({
-        method: 'get',
-        url: '/currentuser',
-        headers: {
-          Authorization: accessToken,
-        },
-      })
-        .then((response) => {
-          console.log(response);
-          const userRes: User = {
-            username: response.data,
-          };
-          setUser(userRes);
-          setLoadUserStatus('succeeded');
+      getCurrentUserRequest()
+        .then((user) => {
+          setUser(user);
+          setCurrentUserStatus('succeeded');
+          setCurrentUserError(undefined);
         })
         .catch((ex) => {
-          console.log(ex);
           setUser(null);
-          setLoadUserStatus('errored');
+          setCurrentUserStatus('error');
+          setCurrentUserError(ex);
         });
     }
     loadUser();
   }, [accessToken]);
 
   const redirectAfterLogin = () => {
-    console.log('redirecting to settings');
     Router.push('/settings');
   };
 
@@ -71,31 +80,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     Router.push('/login');
   };
 
-  const login = async (username: string, password: string) => {
-    const data = {
-      username,
-      password,
-    };
-
-    console.log(data);
-    return axios({
-      method: 'POST',
-      url: '/login',
-      headers: {
-        'content-type': 'application/json',
-      },
-      data,
-    })
-      .then((response) => {
-        console.log(response);
-        setAccessToken(response.headers.authorization);
-        setRefreshToken(response.headers.refreshToken);
+  const login = (loginForm: ILoginForm) => {
+    loginRequest(loginForm)
+      .then((res) => {
+        setAccessToken(res.accessToken);
+        setRefreshToken(res.refreshToken);
+        setLoginError(undefined);
         setLoginStatus('succeeded');
         redirectAfterLogin();
       })
-      .catch((response) => {
-        console.log(response);
-        setLoginStatus('errored');
+      .catch((ex) => {
+        setLoginError(ex);
+        setLoginStatus('error');
       });
   };
 
@@ -122,8 +118,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         user,
         login,
         loading,
-        loginStatus,
         logout,
+        loginError,
+        loginStatus,
       }}
     >
       {children}

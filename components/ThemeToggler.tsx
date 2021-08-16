@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
+import styled from 'styled-components';
+
+const Button = styled.button`
+  border-radius: 50%;
+  padding: 0.3em 0.55em;
+  border: none;
+`;
 
 const ThemeToggler = () => {
   const [theme, setTheme] = useState(false);
@@ -30,13 +37,13 @@ const ThemeToggler = () => {
 
   return (
     <div>
-      <button onClick={handleChange} className="theme-toggler">
+      <Button onClick={handleChange} className="theme-toggler">
         {theme ? (
           <FontAwesomeIcon icon={faMoon} />
         ) : (
           <FontAwesomeIcon icon={faSun} />
         )}
-      </button>
+      </Button>
     </div>
   );
 };

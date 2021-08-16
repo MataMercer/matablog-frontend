@@ -1,14 +1,17 @@
 import Layout from '../components/Layout';
 import LoginForm from '../components/forms/LoginForm';
+import UnauthRoute from '../auth/UnauthRoute';
 
-export default function Login() {
+function Login() {
   return (
     <div>
       <Layout title="Login">
         <h1 className="title">Login</h1>
-        <p>Welcome back to Fortree blog.</p>
+        <p>Welcome back to Matablog.</p>
         <LoginForm />
       </Layout>
     </div>
   );
 }
+
+export default UnauthRoute(Login);

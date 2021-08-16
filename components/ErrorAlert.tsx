@@ -1,8 +1,7 @@
-import { Alert } from 'reactstrap';
-import { FirebaseError } from 'firebase';
-
+import { Alert } from 'react-bootstrap';
+import { ApiError } from '../modelTypes/ApiError';
 type ErrorAlertProps = {
-  errors: FirebaseError[];
+  errors: ApiError[];
 };
 
 const ErrorAlert = ({ errors }: ErrorAlertProps) => {
@@ -11,7 +10,7 @@ const ErrorAlert = ({ errors }: ErrorAlertProps) => {
       {errors.length > 0
         ? errors.map((err, index) => (
             // eslint-disable-next-line react/no-array-index-key
-            <Alert key={index} color="danger">
+            <Alert key={index} variant="danger">
               {err.message}
             </Alert>
           ))

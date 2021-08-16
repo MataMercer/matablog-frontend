@@ -6,13 +6,13 @@ type ProtectRouteProps = {
   children: React.ReactNode;
 };
 
-export default function ProtectRoute(
+export default function UnauthRoute(
   Component: any
 ): React.FC<ProtectRouteProps> {
   return (...args) => {
     const { isAuthenticated, loading } = useAuth();
     useEffect(() => {
-      if (!isAuthenticated && !loading) Router.push('/login');
+      if (isAuthenticated && !loading) Router.push('/');
     }, [isAuthenticated]);
 
     return <Component {...args} />;

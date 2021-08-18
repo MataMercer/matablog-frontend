@@ -69,7 +69,13 @@ const AuthenticatedMenu: React.FC<AuthenticatedMenuProps> = ({ user }) => {
       >
         <Dropdown.Item href="#/action-1">Profile</Dropdown.Item>
         <Dropdown.Item href="#/action-2">Settings</Dropdown.Item>
-        <Dropdown.Item href="#/action-3">Logout</Dropdown.Item>
+        <Dropdown.Item
+          onClick={() => {
+            logout();
+          }}
+        >
+          Logout
+        </Dropdown.Item>
       </DropdownButton>
     </>
   );

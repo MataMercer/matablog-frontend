@@ -28,6 +28,8 @@ const useLocalStorage = (key: string) => {
     setValue((currentValue: any) => {
       const result =
         typeof newValue === 'function' ? newValue(currentValue) : newValue;
+
+      console.log(`Set local value in storage: ${JSON.stringify(result)}`);
       localStorage.setItem(key, JSON.stringify(result));
       return result;
     });

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import useLocalStorage from '../../util/UseLocalStorage';
+import useLocalStorage from './useLocalStorage';
 import useGenericRequest from './util/useGenericRequest';
 
 export default function useAuthToken() {

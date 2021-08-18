@@ -40,9 +40,6 @@ type AuthProviderProps = {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loadUserStatus, setLoadUserStatus] =
-    useState<RequestStatus>('loading');
-  const loading = loadUserStatus === 'loading';
   const { accessToken, refreshToken, setAccessToken, setRefreshToken } =
     useAuthToken();
 
@@ -53,23 +50,31 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     useState<RequestStatus>('idle');
   const [currentUserError, setCurrentUserError] = useState<ApiError>();
 
+  const loading = currentUserStatus === 'loading' || loginStatus === 'loading';
   useAxiosConfig();
 
   useEffect(() => {
     async function loadUser() {
+      console.log('Loading user...');
       getCurrentUserRequest()
         .then((user) => {
+          console.log('User loaded.');
           setUser(user);
           setCurrentUserStatus('succeeded');
           setCurrentUserError(undefined);
         })
         .catch((ex) => {
+          console.log('User failed to load.');
           setUser(null);
           setCurrentUserStatus('error');
           setCurrentUserError(ex);
         });
     }
-    loadUser();
+    if (accessToken) {
+      loadUser();
+    } else {
+      setUser(null);
+    }
   }, [accessToken]);
 
   const redirectAfterLogin = () => {
@@ -79,6 +84,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const redirectAfterLogout = () => {
     Router.push('/login');
   };
+
+  useEffect(() => {
+    console.log(`User changed to: ${user}`);
+  }, [user]);
 
   const login = (loginForm: ILoginForm) => {
     loginRequest(loginForm)
@@ -109,6 +118,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setAccessToken('');
     setRefreshToken('');
     setUser(null);
+    redirectAfterLogout();
   };
 
   return (

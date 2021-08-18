@@ -30,6 +30,7 @@ function useAxiosConfig() {
   }, []);
 
   useEffect(() => {
+    console.log(`Access token set to: ${accessToken}`);
     axios.defaults.headers.Authorization = accessToken;
   }, [accessToken]);
 }

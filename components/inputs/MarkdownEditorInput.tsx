@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormGroup, Label, Input, Row, Col } from 'reactstrap';
+import { Form,  Row, Col } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
 
 type MarkdownEditorInputProps = {
@@ -17,19 +17,22 @@ export default function MarkdownEditorInput(props: MarkdownEditorInputProps) {
     <>
       <Row>
         <Col>
-          <FormGroup>
-            <Label for={id}>{label}</Label>
-            <Input
+          <Form.Group>
+            <Form.Label>{label}</Form.Label>
+            <Form.Control
+              as="textarea"
               rows={15}
               onChange={handleTextChange}
-              type="textarea"
               name={text}
               id={id}
               value={text}
             />
-          </FormGroup>
+          </Form.Group>
         </Col>
-        <Col>{text ? <ReactMarkdown source={text} /> : null}</Col>
+        <Col>
+          <Form.Label>Markdown Preview</Form.Label>
+          {text ? <ReactMarkdown>{text}</ReactMarkdown> : null}
+        </Col>
       </Row>
     </>
   );

@@ -1,29 +1,30 @@
 import { useCallback, useState } from 'react';
-import { ApiError } from '../../../modelTypes/ApiError';
-import { RequestStatus } from '../../../modelTypes/RequestStatus';
+import { ApiError } from '../../../modelTypes/IApiError';
+import { RequestStatus } from '../../../modelTypes/enums/RequestStatus';
 
-function useGenericRequest(request: (args: any) => Promise<any>) {
-  const [res, setRes] = useState<any>();
+function useGenericRequest() {
+  const [data, setData] = useState<any>();
   const [status, setStatus] = useState<RequestStatus>('idle');
   const [errors, setErrors] = useState<ApiError[]>([]);
 
   const callRequest = useCallback(
-    async (input: typeof args) => {
+    async (request: Promise<any>) => {
       setStatus('loading');
       console.log('calling request...');
       try {
-        const res = await request();
+        const res = await request;
         setStatus('succeeded');
-        setRes(res);
+        setData(res);
         console.log('success');
       } catch (err) {
         setErrors([...errors, err]);
         setStatus('error');
+        setData(undefined);
       }
     },
     [errors]
   );
 
-  return { status, errors, callRequest, res };
+  return { status, errors, callRequest, data };
 }
 export default useGenericRequest;

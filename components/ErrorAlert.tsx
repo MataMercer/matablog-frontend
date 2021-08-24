@@ -1,5 +1,5 @@
 import { Alert } from 'react-bootstrap';
-import { ApiError } from '../modelTypes/ApiError';
+import { ApiError } from '../modelTypes/IApiError';
 type ErrorAlertProps = {
   errors: ApiError[];
 };
@@ -11,7 +11,7 @@ const ErrorAlert = ({ errors }: ErrorAlertProps) => {
         ? errors.map((err, index) => (
             // eslint-disable-next-line react/no-array-index-key
             <Alert key={index} variant="danger">
-              {err.message}
+              {`Error: ${err.message}`}
             </Alert>
           ))
         : null}

@@ -4,7 +4,7 @@ import { useAuth } from '../../auth/AuthContext';
 import ErrorAlert from '../ErrorAlert';
 import { useForm } from 'react-hook-form';
 import { Button, Form } from 'react-bootstrap';
-import { ILoginForm } from '../../modelTypes/formTypes/loginForm';
+import { ILoginForm } from '../../modelTypes/formTypes/ILoginForm';
 
 export default function LoginForm() {
   const { login, loginError } = useAuth();

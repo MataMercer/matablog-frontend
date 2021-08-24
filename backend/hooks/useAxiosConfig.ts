@@ -1,13 +1,16 @@
 /* eslint-disable no-param-reassign */
 import axios from 'axios';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
-import { useEffect } from 'react';
-import useAuthToken from './useAuthToken';
+import { useEffect, useState } from 'react';
 import axiosConfig from '../config/AxiosConfig';
 
-function useAxiosConfig() {
-  const { accessToken, refreshToken, setAccessToken, setRefreshToken } =
-    useAuthToken();
+type useAxiosConfigProps = {
+  accessToken?: string;
+  setAccessToken: (accessToken: any) => void;
+};
+
+function useAxiosConfig({ accessToken, setAccessToken }: useAxiosConfigProps) {
+  const [authorization, setAuthorization] = useState('');
 
   axios.defaults.baseURL = axiosConfig.baseURL;
   axios.defaults.headers = axiosConfig.headers;
@@ -16,9 +19,9 @@ function useAxiosConfig() {
   axios.defaults.withCredentials = axiosConfig.withCredentials;
 
   useEffect(() => {
-    console.log('Set interceptor');
     const refreshAuthLogic = (failedRequest: any) =>
       axios.post('/api/user/refreshtoken').then((tokenRefreshResponse) => {
+        console.log('Getting new access token with refresh token.');
         setAccessToken(tokenRefreshResponse.data.token);
         failedRequest.response.config.headers.Authorization = accessToken;
         return Promise.resolve();
@@ -30,9 +33,11 @@ function useAxiosConfig() {
   }, []);
 
   useEffect(() => {
-    console.log(`Access token set to: ${accessToken}`);
     axios.defaults.headers.Authorization = accessToken;
+    setAuthorization(axios.defaults.headers.Authorization);
   }, [accessToken]);
+
+  return { authorization };
 }
 
 export default useAxiosConfig;

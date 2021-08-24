@@ -1,32 +1,14 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
-import {
-  Container,
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Row,
-  Col,
-  Badge,
-} from 'reactstrap';
+import { Container, Button, Modal, Row, Col, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
-import { IProjectEntry } from '../ModelTypes/interfaces';
 import CompletionStatusBadge from './CompletionStatusBadge';
+import IPost from '../modelTypes/IPost';
 
-const ProjectEntryThumbnail = (props: IProjectEntry) => {
-  const {
-    id,
-    title,
-    introDescription,
-    demoLink,
-    pictureUrls,
-    tags,
-    completionStatus,
-  } = props;
+const PostThumbnail = (props: IPost) => {
+  const { id, title, content, pictureUrls, tags } = props;
 
   const ImageShowSecondPictureOnHover = ({ pictureSrc, altText }: any) => {
     return (
@@ -43,7 +25,7 @@ const ProjectEntryThumbnail = (props: IProjectEntry) => {
       as={`/projectentry/${id}`}
     >
       <a className="project-entry-anchor">
-        <Container className="project-entry" color="primary" fluid="xs">
+        <Container className="project-entry" color="primary">
           <Row>
             <Col>
               <img
@@ -74,14 +56,9 @@ const ProjectEntryThumbnail = (props: IProjectEntry) => {
                 </h2>
               </Col>
             </Row>
-
-            <Row>
-              <Col sm="auto">{introDescription}</Col>
-            </Row>
             {tags ? (
               <Row>
                 <Col>
-                  <CompletionStatusBadge completionStatus={completionStatus} />
                   {Object.keys(tags).map((tag) => (
                     <Badge key={tag} color="info">
                       {tag}
@@ -97,4 +74,4 @@ const ProjectEntryThumbnail = (props: IProjectEntry) => {
   );
 };
 
-export default ProjectEntryThumbnail;
+export default PostThumbnail;

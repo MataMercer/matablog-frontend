@@ -2,8 +2,8 @@ import { Row, ListGroup } from 'reactstrap';
 import { useState, useEffect } from 'react';
 // eslint-disable-next-line no-unused-vars
 import Link from 'next/link';
-import { IProjectEntry } from '../../ModelTypes/interfaces';
-import ProjectEntryListItem from './ProjectEntryListItem';
+import { IProjectEntry } from '../../modelTypes/IPost';
+import ProjectEntryListItem from './DashboardPost';
 import {
   getProjectEntries,
   deleteProjectEntry,
@@ -12,7 +12,7 @@ import ErrorAlert from '../ErrorAlert';
 import { deleteFile } from '../../backend/repositories/StorageRepository';
 
 export default function ProjectEntryList() {
-  const [errors, setErrors] = useState<string []>([]);
+  const [errors, setErrors] = useState<string[]>([]);
   const [projectEntries, setProjectEntries] = useState<IProjectEntry[]>([]);
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('loading');
   useEffect(() => {

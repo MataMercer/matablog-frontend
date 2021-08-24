@@ -1,5 +1,6 @@
 import React from 'react';
 import Layout from '../components/Layout';
+import PostListDisplay from '../components/PostListDisplay';
 
 export default function Home() {
   return (
@@ -7,7 +8,7 @@ export default function Home() {
       <Layout title="Home">
         <section>
           <h1>Timeline</h1>
-          <p>fsoijiofsdj os</p>
+          <PostListDisplay />
         </section>
       </Layout>
     </div>

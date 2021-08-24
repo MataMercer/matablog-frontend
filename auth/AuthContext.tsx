@@ -9,18 +9,18 @@ import React, {
 import Router from 'next/router';
 // eslint-disable-next-line no-unused-vars
 import axios from 'axios';
-import { User } from '../modelTypes/User';
+import { IUser } from '../modelTypes/IUser';
 import useAuthToken from '../backend/hooks/useAuthToken';
 import useAxiosConfig from '../backend/hooks/useAxiosConfig';
-import { RequestStatus } from '../modelTypes/RequestStatus';
+import { RequestStatus } from '../modelTypes/enums/RequestStatus';
 import useGenericRequest from '../backend/hooks/util/useGenericRequest';
 import {
   getCurrentUserRequest,
   loginRequest,
 } from '../backend/repositories/UserRepository';
-import { ILoginForm } from '../modelTypes/formTypes/loginForm';
-import { ApiError } from '../modelTypes/ApiError';
-import { AuthTokens } from '../modelTypes/AuthTokens';
+import { ILoginForm } from '../modelTypes/formTypes/ILoginForm';
+import { ApiError } from '../modelTypes/IApiError';
+import { IAuthTokens } from '../modelTypes/IAuthTokens';
 
 type AuthContextProps = {
   login: (loginForm: ILoginForm) => void;
@@ -28,7 +28,7 @@ type AuthContextProps = {
   loading: boolean;
   loginStatus: RequestStatus;
   isAuthenticated: boolean;
-  user: User | null;
+  user: IUser | null;
   loginError?: ApiError;
 };
 
@@ -39,7 +39,7 @@ type AuthProviderProps = {
 };
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<IUser | null>(null);
   const { accessToken, refreshToken, setAccessToken, setRefreshToken } =
     useAuthToken();
 
@@ -51,31 +51,28 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [currentUserError, setCurrentUserError] = useState<ApiError>();
 
   const loading = currentUserStatus === 'loading' || loginStatus === 'loading';
-  useAxiosConfig();
+  const { authorization } = useAxiosConfig({ accessToken, setAccessToken });
 
   useEffect(() => {
     async function loadUser() {
-      console.log('Loading user...');
       getCurrentUserRequest()
         .then((user) => {
-          console.log('User loaded.');
           setUser(user);
           setCurrentUserStatus('succeeded');
           setCurrentUserError(undefined);
         })
         .catch((ex) => {
-          console.log('User failed to load.');
           setUser(null);
           setCurrentUserStatus('error');
           setCurrentUserError(ex);
         });
     }
-    if (accessToken) {
+    if (authorization) {
       loadUser();
     } else {
       setUser(null);
     }
-  }, [accessToken]);
+  }, [authorization]);
 
   const redirectAfterLogin = () => {
     Router.push('/settings');
@@ -96,7 +93,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setRefreshToken(res.refreshToken);
         setLoginError(undefined);
         setLoginStatus('succeeded');
-        redirectAfterLogin();
       })
       .catch((ex) => {
         setLoginError(ex);

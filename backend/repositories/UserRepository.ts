@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { AuthTokens } from '../../modelTypes/AuthTokens';
-import { ILoginForm } from '../../modelTypes/formTypes/loginForm';
-import { User } from '../../modelTypes/User';
+import { IAuthTokens } from '../../modelTypes/IAuthTokens';
+import { ILoginForm } from '../../modelTypes/formTypes/ILoginForm';
+import { IUser } from '../../modelTypes/IUser';
 
 async function loginRequest({ username, password }: ILoginForm) {
   const data = {
@@ -17,7 +17,7 @@ async function loginRequest({ username, password }: ILoginForm) {
     },
     data,
   }).then((response) => {
-    const authTokenRes: AuthTokens = {
+    const authTokenRes: IAuthTokens = {
       accessToken: response.headers.authorization,
       refreshToken: response.headers.refreshtoken,
     };
@@ -30,7 +30,7 @@ async function getCurrentUserRequest() {
     method: 'get',
     url: '/user/currentuser',
   }).then((response) => {
-    const userRes: User = {
+    const userRes: IUser = {
       username: response.data,
     };
     return userRes;

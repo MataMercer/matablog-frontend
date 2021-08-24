@@ -1,4 +1,4 @@
-import { Badge } from 'reactstrap';
+import { Badge } from 'react-bootstrap';
 
 type CompletionStatusBadgeProps = {
   completionStatus: string;

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useAuth } from '../auth/AuthContext';
 import styled from 'styled-components';
-import { User } from '../modelTypes/User';
+import { IUser } from '../modelTypes/IUser';
 import ThemeToggler from './ThemeToggler';
 import {
   faUser,
@@ -31,13 +31,17 @@ const Nav = styled.nav`
   padding: 15px 20px;
   z-index: 999;
   position: relative;
+  height: 3em;
 `;
 const NavList = styled.ul`
   list-style: none;
   display: flex;
   justify-content: space-around;
+  align-items: center;
 `;
-const NavItem = styled.li``;
+const NavItem = styled.li`
+  align-items: center;
+`;
 const Brand = styled.a`
   display: flex;
   cursor: pointer;
@@ -54,7 +58,7 @@ const H1 = styled.h1`
 `;
 
 interface AuthenticatedMenuProps {
-  user: User | null;
+  user: IUser | null;
 }
 const AuthenticatedMenu: React.FC<AuthenticatedMenuProps> = ({ user }) => {
   const { logout } = useAuth();
@@ -62,6 +66,11 @@ const AuthenticatedMenu: React.FC<AuthenticatedMenuProps> = ({ user }) => {
 
   return (
     <>
+      <NavItem>
+        <Link href="postformpage">
+          <Button>Create Post</Button>
+        </Link>
+      </NavItem>
       <DropdownButton
         id="dropdown-basic-button"
         title={user?.username}
@@ -133,7 +142,6 @@ export const NavBar: React.FC<{}> = ({}) => {
         </Link>
         <StyledSearch />
         <NavList>
-          <NavItem></NavItem>
           <NavItem>
             <ThemeToggler />
           </NavItem>

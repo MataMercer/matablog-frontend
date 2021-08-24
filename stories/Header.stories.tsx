@@ -2,7 +2,7 @@ import React from 'react';
 import { Story, Meta } from '@storybook/react';
 
 import { Header, HeaderProps } from '../components/Header';
-import { User } from '../modelTypes/User';
+import { IUser } from '../modelTypes/IUser';
 
 export default {
   title: 'Example/Header',
@@ -13,7 +13,7 @@ const Template: Story<HeaderProps> = (args) => <Header {...args} />;
 
 export const LoggedIn = Template.bind({});
 LoggedIn.args = {
-  user: { username: 'Matamercer' } as User,
+  user: { username: 'Matamercer' } as IUser,
 };
 
 export const LoggedOut = Template.bind({});

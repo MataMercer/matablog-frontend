@@ -2,6 +2,7 @@ import axios from 'axios';
 import { IPostForm } from '../../modelTypes/formTypes/IPostForm';
 import { IPostSearchForm } from '../../modelTypes/formTypes/IPostSearchForm';
 import IPost from '../../modelTypes/IPost';
+import { IPage } from '../../modelTypes/IPage';
 
 const getPostRequest = async (postId: string) => {
   const response = await axios({
@@ -17,7 +18,8 @@ const getPostsRequest = async (postSearchForm: IPostSearchForm) => {
     url: '/post/',
     params: postSearchForm,
   });
-  return response.data as IPost[];
+  console.log(response.data.content);
+  return response.data as IPage<IPost>;
 };
 
 const createPostRequest = async (postData: IPostForm) => {
@@ -43,13 +45,14 @@ const createPostRequest = async (postData: IPostForm) => {
     formData.append('files', file);
   });
 
+
   const response = await axios({
     method: 'post',
     url: '/post/create',
     headers: {
       'Content-Type': 'multipart/form-data',
     },
-    data: postData,
+    data: formData,
   });
   return response.data as IPost;
 };

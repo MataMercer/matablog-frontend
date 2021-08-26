@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [loginError, setLoginError] = useState<ApiError>();
 
   const [currentUserStatus, setCurrentUserStatus] =
-    useState<RequestStatus>('idle');
+    useState<RequestStatus>('loading');
   const [currentUserError, setCurrentUserError] = useState<ApiError>();
 
   const loading = currentUserStatus === 'loading' || loginStatus === 'loading';

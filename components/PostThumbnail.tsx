@@ -6,46 +6,27 @@ import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
 import CompletionStatusBadge from './CompletionStatusBadge';
 import IPost from '../modelTypes/IPost';
+import styled from 'styled-components';
+
+const ThumbnailImg = styled.img`
+  object-fit: contain;
+  height: 10em;
+  width: 100%;
+`;
 
 const PostThumbnail = (props: IPost) => {
-  const { id, title, content, pictureUrls, tags } = props;
-
-  const ImageShowSecondPictureOnHover = ({ pictureSrc, altText }: any) => {
-    return (
-      <div>
-        <img src={pictureSrc} alt={altText} />
-      </div>
-    );
-  };
+  const { id, title, pictureUrls, tags } = props;
 
   return (
-    <Link
-      scroll={false}
-      href={`/?projectentryid=${id}`}
-      as={`/projectentry/${id}`}
-    >
+    <Link scroll={false} href={`/?postid=${id}`} as={`/post/${id}`}>
       <a className="project-entry-anchor">
         <Container className="project-entry" color="primary">
           <Row>
             <Col>
-              <img
-                className={`project-entry-thumbnail-image ${
-                  pictureUrls.length > 1
-                    ? 'project-entry-thumbnail-image-first'
-                    : ''
-                }`}
+              <ThumbnailImg
                 src={pictureUrls.length > 0 ? pictureUrls[0] : '/no-image.png'}
                 alt="ProjectEntryThumbnail"
               />
-              {pictureUrls.length > 1 ? (
-                <img
-                  className="project-entry-thumbnail-image-second"
-                  src={
-                    pictureUrls.length > 1 ? pictureUrls[1] : '/no-image.png'
-                  }
-                  alt="ProjectEntryThumbnail"
-                />
-              ) : null}
             </Col>
           </Row>
           <div className="project-entry-text">

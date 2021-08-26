@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Form, Spinner } from 'react-bootstrap';
 import Router from 'next/router';
 import { WithContext as ReactTags, Tag } from 'react-tag-input';
@@ -8,13 +8,19 @@ import UploadInput, { FileInput } from '../inputs/UploadInput';
 import ErrorAlert from '../ErrorAlert';
 import { IPostForm } from '../../modelTypes/formTypes/IPostForm';
 import usePost from '../../backend/hooks/usePost';
+import IPost from '../../modelTypes/IPost';
+import { createPostRequest } from '../../backend/repositories/PostRepository';
+import { IPostTag } from '../../modelTypes/IPostTag';
+import { RequestStatus } from '../../modelTypes/enums/RequestStatus';
+import { ApiError } from '../../modelTypes/IApiError';
 
 type PostFormProps = {
   postId: string;
 };
 
 type PostFormData = {
-  postForm: IPostForm;
+  postForm: IPost;
+  pictureFiles: FileInput[];
   reactTags: Tag[];
 };
 
@@ -24,8 +30,6 @@ export default function PostForm({ postId }: PostFormProps) {
   });
   const {
     post: fetchedPost,
-    createPost,
-    updatePost,
     errors: postErrors,
     status: postStatus,
   } = usePost({
@@ -33,22 +37,25 @@ export default function PostForm({ postId }: PostFormProps) {
     postId,
   });
 
-  const {
-    tags: tagSuggestions,
-    errors: tagSuggestionsErrors,
-    status: tagSuggestionsStatus,
-  } = useTags({ initialLoad: true });
+  // const {
+  //   tags: tagSuggestions,
+  //   errors: tagSuggestionsErrors,
+  //   status: tagSuggestionsStatus,
+  // } = useTags({ initialLoad: true });
 
-  const disabled =
-    storageStatus === 'loading' ||
-    postStatus === 'loading' ||
-    tagSuggestionsStatus === 'loading';
+  const disabled = postStatus === 'loading';
+  // tagSuggestionsStatus === 'loading';
+  const loading = postStatus === 'loading';
+
+  const [createPostStatus, setCreatePostStatus] =
+    useState<RequestStatus>('idle');
+  const [createPostError, setCreatePostError] = useState<ApiError>();
 
   useEffect(() => {
     if (fetchedPost) {
       reset({
         postForm: fetchedPost,
-        pictureFiles: fetchedPost.pictureUrls.map((url) => ({ url })),
+        pictureFiles: fetchedPost.pictureUrls.map((url: string) => ({ url })),
         reactTags: Object.keys(fetchedPost.tags).map((tagName) => ({
           id: tagName,
           text: tagName,
@@ -60,60 +67,39 @@ export default function PostForm({ postId }: PostFormProps) {
   const onSubmit = (data: PostFormData) => {
     const { pictureFiles } = data;
 
-    const uploadPictures = async (picturesToUpload: File[]) => {
-      return Promise.all(
-        picturesToUpload.map((picture: File) => uploadFile(picture))
-      );
-    };
-
-    const deletePictures = async () => {
-      const existingPictureUrls = fetchedPost?.pictureUrls;
-      if (!existingPictureUrls) {
-        return null;
-      }
-      const pictureUrls = pictureFiles
-        .filter((files) => !files.data)
-        .map((file) => file.url);
-      return Promise.all(
-        existingPictureUrls.map((existingPictureUrl) => {
-          if (!pictureUrls.includes(existingPictureUrl)) {
-            return deleteFile(existingPictureUrl);
-          }
-          return null;
-        })
-      );
-    };
-
-    const convertReactTagsToFirebaseObject = () => {
-      const obj: { [name: string]: true } = {};
-      data.reactTags.forEach((reactTag) => {
-        obj[reactTag.id] = true;
-      });
-      return obj;
-    };
-
+    const convertReactTagsToITags = () =>
+      data.reactTags.map((reactTag) => ({ name: reactTag.id } as IPostTag));
     const submit = async () => {
       const filesToUpload = pictureFiles
         .map((file) => file.data)
         .filter((file) => file) as File[];
-      const successUploadedPictureUrls = await uploadPictures(filesToUpload);
-      await deletePictures();
 
       const fileUrlsToKeep = pictureFiles
         .filter((file) => !file.data)
         .map((file) => file.url);
 
       if (postId && fetchedPost) {
-        await updatePost({
-          ...data.postForm,
-          pictureUrls: [...fileUrlsToKeep, ...successUploadedPictureUrls],
-        });
+        // await updatePost({
+        //   ...data.postForm,
+        //   pictureUrls: [...fileUrlsToKeep, ...successUploadedPictureUrls],
+        // });
       } else {
-        await createPost({
-          ...data.postForm,
-        });
       }
-      Router.push('/');
+      data.postForm.published = true;
+      createPostRequest({
+        ...data.postForm,
+        tags: convertReactTagsToITags(),
+        files: filesToUpload,
+      })
+        .then(() => {
+          setCreatePostStatus('succeeded');
+          setCreatePostError(undefined);
+          Router.push('/');
+        })
+        .catch((ex) => {
+          setCreatePostStatus('error');
+          setCreatePostError(ex);
+        });
     };
     submit();
   };
@@ -126,7 +112,7 @@ export default function PostForm({ postId }: PostFormProps) {
   return (
     <>
       <Form onSubmit={handleSubmit(onSubmit)}>
-        <ErrorAlert errors={[...postErrors, ...tagSuggestionsErrors]} />
+        <ErrorAlert errors={[...postErrors]} />
         <Form.Group>
           <Form.Label>Title</Form.Label>
           <Controller
@@ -178,10 +164,6 @@ export default function PostForm({ postId }: PostFormProps) {
                   setValue('reactTags', newTags);
                 }}
                 delimiters={delimiters}
-                suggestions={tagSuggestions.map((tag: string) => ({
-                  id: tag,
-                  text: tag,
-                }))}
               />
             )}
           />
@@ -204,8 +186,42 @@ export default function PostForm({ postId }: PostFormProps) {
             )}
           />
         </Form.Group>
+
+        <Form.Group>
+          <Form.Label>Mark as sensitive</Form.Label>
+          <Controller
+            name="postForm.sensitive"
+            control={control}
+            defaultValue={false}
+            render={({ field }) => (
+              <Form.Check
+                value={field.value as any}
+                onChange={field.onChange}
+              />
+            )}
+          />
+        </Form.Group>
+
+        <Form.Group>
+          <Form.Label>Allow Community Tagging</Form.Label>
+          <Controller
+            name="postForm.communityTaggingEnabled"
+            control={control}
+            defaultValue={false}
+            render={({ field }) => (
+              <Form.Check
+                value={field.value as any}
+                onChange={field.onChange}
+              />
+            )}
+          />
+        </Form.Group>
+
         <Button color="primary" type="submit" disabled={disabled}>
-          save
+          Save Draft
+        </Button>
+        <Button color="primary" type="submit" disabled={disabled}>
+          Create
         </Button>
         {loading ? <Spinner animation="border" /> : null}
       </Form>

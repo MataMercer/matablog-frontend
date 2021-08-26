@@ -10,4 +10,5 @@ export default interface IPost {
   updatedAt?: Date;
   communityTaggingEnabled: boolean;
   sensitive: boolean;
+  published: boolean;
 }

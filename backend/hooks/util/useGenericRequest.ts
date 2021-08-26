@@ -2,8 +2,8 @@ import { useCallback, useState } from 'react';
 import { ApiError } from '../../../modelTypes/IApiError';
 import { RequestStatus } from '../../../modelTypes/enums/RequestStatus';
 
-function useGenericRequest() {
-  const [data, setData] = useState<any>();
+function useGenericRequest<T>() {
+  const [data, setData] = useState<T>();
   const [status, setStatus] = useState<RequestStatus>('idle');
   const [errors, setErrors] = useState<ApiError[]>([]);
 

@@ -115,7 +115,6 @@ const Search: React.FC<{ className?: string }> = ({ className }) => {
         <Dropdown.Item href="#">All</Dropdown.Item>
         <Dropdown.Item href="#">Media</Dropdown.Item>
         <Dropdown.Item href="#">Replies</Dropdown.Item>
-        <Dropdown.Item href="#">Something else here</Dropdown.Item>
       </DropdownButton>
       <FormControl aria-label="Text input with dropdown button" />
       <Button>

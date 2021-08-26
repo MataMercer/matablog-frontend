@@ -12,9 +12,6 @@ async function loginRequest({ username, password }: ILoginForm) {
   return axios({
     method: 'POST',
     url: '/auth/login',
-    headers: {
-      'content-type': 'application/json',
-    },
     data,
   }).then((response) => {
     const authTokenRes: IAuthTokens = {

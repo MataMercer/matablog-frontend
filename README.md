@@ -1,4 +1,6 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# MataBlog Web App
+
+This is the front end application to [MataBlog] (https://github.com/MataMercer/matablog). Built in NextJS, so if you're familiar with that, you're ready to go.
 
 ## Getting Started
 

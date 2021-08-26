@@ -1,6 +1,6 @@
 # MataBlog Web App
 
-This is the front end application to [MataBlog] (https://github.com/MataMercer/matablog). Built in NextJS, so if you're familiar with that, you're ready to go.
+This is the front end application to [MataBlog](https://github.com/MataMercer/matablog). Built in NextJS, so if you're familiar with that, you're ready to go.
 
 ## Getting Started
 

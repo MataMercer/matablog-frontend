@@ -16,13 +16,10 @@ const Article = styled.article`
 const Layout = ({ children, title }: LayoutProps) => (
   <div>
     <Head>
-      <title>{`${title} - Mercer Denholm Portfolio`}</title>
+      <title>{`${title} - MataBlog`}</title>
       <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <meta
-        name="description"
-        content="A portfolio of software projects by Mercer Lee Denholm. View his work or get in contact with him through email, Github, or LinkedIn."
-      />
+      <meta name="description" content="A small blog for Mercer Denholm" />
     </Head>
 
     <div>

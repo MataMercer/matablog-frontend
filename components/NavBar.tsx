@@ -67,7 +67,7 @@ const AuthenticatedMenu: React.FC<AuthenticatedMenuProps> = ({ user }) => {
   return (
     <>
       <NavItem>
-        <Link href="postformpage">
+        <Link href="/postformpage">
           <Button>Create Post</Button>
         </Link>
       </NavItem>

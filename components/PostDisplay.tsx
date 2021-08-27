@@ -14,11 +14,11 @@ type ProjectEntryProps = {
   setPageTitle?: (pageTitle: string) => void;
 };
 
-const ProjectEntry = ({
+export default function PostDisplay({
   postId,
   postLocal,
   setPageTitle,
-}: ProjectEntryProps) => {
+}: ProjectEntryProps) {
   const [postState, setPostState] = useState<IPost>();
   const {
     post: fetchedPost,
@@ -83,7 +83,7 @@ const ProjectEntry = ({
           {tags ? (
             <Row>
               {Object.keys(tags).map((tag) => (
-                <Badge key={tag} color="info">
+                <Badge key={tag} bg="info">
                   {tag}
                 </Badge>
               ))}
@@ -133,6 +133,4 @@ const ProjectEntry = ({
       </Row>
     </Modal>
   );
-};
-
-export default ProjectEntry;
+}

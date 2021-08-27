@@ -2,6 +2,44 @@ import React, { useState, useEffect } from 'react';
 import { Container, Button, Row, Col } from 'react-bootstrap';
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import styled from 'styled-components';
+
+const PostPicture = styled.img`
+  object-fit: scale-down;
+  width: 100%;
+  height: 80vh;
+`;
+
+const Nav = styled(Row)`
+  padding: 0.5em;
+`;
+
+const NavItemButton = styled.button`
+  background-color: #1e1e24;
+  border: none;
+  padding: 0;
+  border-radius: 0;
+  font-size: x-large;
+  height: 3em;
+`;
+
+type NavItemImageProps = {
+  active: boolean;
+};
+const NavItemImage = styled.img<NavItemImageProps>`
+  object-fit: contain;
+  width: 5em;
+  height: 5em;
+  filter: brightness(70%);
+  ${(props) =>
+    props.active
+      ? `
+      filter: brightness(100%);
+      outline: 0.3em solid ${props.theme.colors.primary};
+      outline-offset: -0.3em;;
+    `
+      : ``}
+`;
 
 type ThumbnailCarouselProps = {
   pictureUrls: string[];
@@ -43,10 +81,9 @@ const ThumbnailCarousel = ({ pictureUrls }: ThumbnailCarouselProps) => {
     <Container>
       <Row>
         {pictureUrls.map((pictureUrl, i) => (
-          <img
+          <PostPicture
             // eslint-disable-next-line react/no-array-index-key
             key={i}
-            className="project-entry-screenshot"
             src={pictureUrl}
             alt="Screenshot of app"
             hidden={i !== index}
@@ -66,19 +103,20 @@ const ThumbnailCarousel = ({ pictureUrls }: ThumbnailCarouselProps) => {
           />
         </Button>
         {pictureUrls.map((pictureUrl, i) => (
-          <button
+          <NavItemButton
             // eslint-disable-next-line react/no-array-index-key
             key={i}
-            className={`thumbnail-carousel-nav-item ${
-              i === index ? 'thumbnail-carousel-nav-item-active' : ''
-            }`}
             type="button"
             onClick={() => {
               setIndex(i);
             }}
           >
-            <img alt="thumbnail for selection" src={pictureUrl} />
-          </button>
+            <NavItemImage
+              alt="thumbnail for selection"
+              src={pictureUrl}
+              active={i === index}
+            />
+          </NavItemButton>
         ))}
         <Button
           value="right"

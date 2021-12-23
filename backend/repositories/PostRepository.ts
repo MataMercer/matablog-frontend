@@ -1,15 +1,18 @@
 import axios from 'axios';
-import { IPostForm } from '../../modelTypes/formTypes/IPostForm';
-import { IPostSearchForm } from '../../modelTypes/formTypes/IPostSearchForm';
-import IPost from '../../modelTypes/IPost';
-import { IPage } from '../../modelTypes/IPage';
+import { IPostRequest } from '../../Types/requestTypes/IPostRequest';
+import { IPostSearchForm } from '../../Types/requestTypes/IPostSearchRequest';
+import IPost from '../../Types/IPost';
+import { IPage } from '../../Types/IPage';
+import IFile from '../../Types/IFile';
 
 const getPostRequest = async (postId: string) => {
   const response = await axios({
     method: 'get',
     url: `/post/${postId}`,
   });
-  return response.data as IPost;
+  return {
+    ...response.data,
+  } as IPost;
 };
 
 const getPostsRequest = async (postSearchForm: IPostSearchForm) => {
@@ -19,10 +22,12 @@ const getPostsRequest = async (postSearchForm: IPostSearchForm) => {
     params: postSearchForm,
   });
   console.log(response.data.content);
-  return response.data as IPage<IPost>;
+  return {
+    ...response.data,
+  } as IPage<IPost>;
 };
 
-const createPostRequest = async (postData: IPostForm) => {
+const createPostRequest = async (postData: IPostRequest) => {
   const convertJsonListToFormDataList = (input: string[]) => {
     return JSON.stringify(input)
       .replaceAll('"', '')
@@ -41,6 +46,7 @@ const createPostRequest = async (postData: IPostForm) => {
     JSON.stringify(postData.communityTaggingEnabled)
   );
   formData.append('sensitive', JSON.stringify(postData.sensitive));
+  formData.append('published', JSON.stringify(postData.published));
   postData.files.forEach((file) => {
     formData.append('files', file);
   });
@@ -59,7 +65,23 @@ const createPostRequest = async (postData: IPostForm) => {
 
 const updatePostRequest = async (postData: IPost) => { };
 
-const deletePostRequest = async (idToDelete: string) => { };
+const deletePostRequest = async (id: string) => {
+  const response = await axios({
+    method: 'delete',
+    url: `/post/${id}`,
+  });
+  return {
+    ...response.data,
+  };
+};
+
+const likePostRequest = async (id: string, isLike: boolean) => {
+  const response = await axios({
+    method: isLike ? 'post' : 'delete',
+    url: `/post/${id}/like`,
+  });
+  return response.data;
+}
 
 export {
   getPostRequest,
@@ -67,4 +89,5 @@ export {
   createPostRequest,
   updatePostRequest,
   deletePostRequest,
+  likePostRequest,
 };

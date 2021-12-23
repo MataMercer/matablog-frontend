@@ -3,8 +3,7 @@ import { ListGroupItem, Row, Col, Button } from 'reactstrap';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import { FirebaseError } from 'firebase';
-import { IProjectEntry } from '../../modelTypes/IPost';
+import { IProjectEntry } from '../../Types/IPost';
 import { deleteFile } from '../../backend/repositories/StorageRepository';
 import ErrorAlert from '../ErrorAlert';
 

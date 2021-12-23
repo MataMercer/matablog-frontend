@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { IAuthTokens } from '../../modelTypes/IAuthTokens';
-import { ILoginForm } from '../../modelTypes/formTypes/ILoginForm';
-import { IUser } from '../../modelTypes/IUser';
+import { IAuthTokens } from '../../Types/IAuthTokens';
+import { ILoginRequest } from '../../Types/requestTypes/ILoginRequest';
+import IUser from '../../Types/IUser';
 
-async function loginRequest({ username, password }: ILoginForm) {
+async function loginRequest({ username, password }: ILoginRequest) {
   const data = {
     username,
     password,
@@ -27,11 +27,16 @@ async function getCurrentUserRequest() {
     method: 'get',
     url: '/user/currentuser',
   }).then((response) => {
+    console.log(response);
     const userRes: IUser = {
-      username: response.data,
+      id: response.data.id,
+      username: response.data.username,
+      activeBlog: response.data.activeBlog,
     };
     return userRes;
   });
 }
+
+
 
 export { getCurrentUserRequest, loginRequest };

@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 // eslint-disable-next-line no-unused-vars
-import { useAuth } from '../../auth/AuthContext';
-import ErrorAlert from '../ErrorAlert';
 import { useForm } from 'react-hook-form';
 import { Button, Form } from 'react-bootstrap';
-import { ILoginForm } from '../../modelTypes/formTypes/ILoginForm';
+import { useAuth } from '../../auth/AuthContext';
+import ErrorAlert from '../ErrorAlert';
+import { ILoginRequest } from '../../Types/requestTypes/ILoginRequest';
 
 export default function LoginForm() {
   const { login, loginError } = useAuth();
-  const { register, setValue, handleSubmit, watch } = useForm<ILoginForm>({
+  const { register, setValue, handleSubmit, watch } = useForm<ILoginRequest>({
     criteriaMode: 'all',
   });
   const onSubmit = handleSubmit((data) => {

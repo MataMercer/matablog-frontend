@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
-import { ApiError } from '../../../modelTypes/IApiError';
-import { RequestStatus } from '../../../modelTypes/enums/RequestStatus';
+import { ApiError } from '../../../Types/IApiError';
+import { RequestStatus } from '../../../Types/enums/RequestStatus';
 
 function useGenericRequest<T>() {
   const [data, setData] = useState<T>();
@@ -10,13 +10,12 @@ function useGenericRequest<T>() {
   const callRequest = useCallback(
     async (request: Promise<any>) => {
       setStatus('loading');
-      console.log('calling request...');
       try {
         const res = await request;
         setStatus('succeeded');
+        setErrors([]);
         setData(res);
-        console.log('success');
-      } catch (err) {
+      } catch (err: any) {
         setErrors([...errors, err]);
         setStatus('error');
         setData(undefined);

@@ -2,7 +2,7 @@ import React from 'react';
 import { Story, Meta } from '@storybook/react';
 
 import { Header, HeaderProps } from '../components/Header';
-import { IUser } from '../modelTypes/IUser';
+import { IUser } from '../Types/IUser';
 
 export default {
   title: 'Example/Header',

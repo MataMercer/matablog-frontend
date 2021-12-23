@@ -2,7 +2,7 @@ import { Row, ListGroup } from 'reactstrap';
 import { useState, useEffect } from 'react';
 // eslint-disable-next-line no-unused-vars
 import Link from 'next/link';
-import { IProjectEntry } from '../../modelTypes/IPost';
+import { IProjectEntry } from '../../Types/IPost';
 import ProjectEntryListItem from './DashboardPost';
 import {
   getProjectEntries,

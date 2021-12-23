@@ -1,6 +1,6 @@
 import React from 'react';
 import { Spinner } from 'react-bootstrap';
-import { RequestStatus } from '../modelTypes/enums/RequestStatus';
+import { RequestStatus } from '../Types/enums/RequestStatus';
 
 type CenterSpinnerProps = {
   status: RequestStatus;
@@ -8,7 +8,7 @@ type CenterSpinnerProps = {
 export default function CenterSpinner({ status }: CenterSpinnerProps) {
   return (
     <div className="center-spinner">
-      {status === 'loading' ? <Spinner animation="border" /> : null}
+      {status === 'loading' && <Spinner animation="border" />}
     </div>
   );
 }

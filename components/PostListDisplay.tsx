@@ -1,30 +1,36 @@
-import ErrorAlert from './ErrorAlert';
-import ProjectEntryThumbnail from './PostThumbnail';
-import CenterSpinner from './CenterSpinner';
-import { Container, Row, Col } from 'react-bootstrap';
-import usePosts from '../backend/hooks/usePosts';
-import React, { useState } from 'react';
-import PostThumbnail from './PostThumbnail';
-import PostDisplay from './PostDisplay';
-import IPost from '../modelTypes/IPost';
-import PaginationNav from './PaginationNav';
 import { useRouter } from 'next/router';
+import { Container, Row, Col } from 'react-bootstrap';
+import React from 'react';
+import ErrorAlert from './ErrorAlert';
+import CenterSpinner from './CenterSpinner';
+import usePosts from '../backend/hooks/usePosts';
+import PostThumbnail from './PostThumbnail';
+import IPost from '../Types/IPost';
+import PaginationNav from './PaginationNav';
+import { PostCategory } from '../Types/enums/PostCategory';
+import { IPostSearchForm } from '../Types/requestTypes/IPostSearchRequest';
 
-export default function PostListDisplay() {
+type PostListDisplayProps = {
+  postSearchForm: IPostSearchForm;
+};
+
+export default function PostListDisplay({
+  postSearchForm,
+}: PostListDisplayProps) {
   const router = useRouter();
   const params = router.query;
 
-  const page = params && params.page ? parseInt(params.page as string) - 1 : 0;
+  const page =
+    params && params.page ? parseInt(params.page as string, 10) - 1 : 0;
 
   const { postsPage, status, errors } = usePosts({
-    initialLoad: !!params,
+    initialLoad: !!params && !!postSearchForm,
     postSearchForm: {
-      page: page,
-      pageSize: 6,
-      category: 'ROOT',
+      ...postSearchForm,
+      page,
     },
   });
-  const projectEntriesPerRow = 2;
+  const projectEntriesPerRow = 4;
   const posts = postsPage?.content;
   const empty = postsPage?.empty;
   const totalPages = postsPage?.totalPages;
@@ -46,21 +52,22 @@ export default function PostListDisplay() {
                   {posts
                     .slice(index, index + projectEntriesPerRow)
                     .map((post: IPost) => (
-                      <Col md="6" key={post.id}>
+                      <Col md="3" key={post.id}>
                         <PostThumbnail
                           key={post.id}
                           id={post.id}
                           title={post.title}
                           content={post.content}
                           tags={post.tags}
-                          pictureUrls={post.pictureUrls ? post.pictureUrls : []}
+                          attachments={post.attachments ? post.attachments : []}
                           createdAt={post.createdAt}
                           updatedAt={post.updatedAt}
                           communityTaggingEnabled={post.communityTaggingEnabled}
                           sensitive={post.sensitive}
                           published={post.published}
+                          blog={post.blog}
+                          likes={post.likes}
                         />
-                        <PostDisplay postLocal={post} />
                       </Col>
                     ))}
                 </Row>

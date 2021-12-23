@@ -7,20 +7,17 @@ import styled from 'styled-components';
 const PostPicture = styled.img`
   object-fit: scale-down;
   width: 100%;
-  height: 80vh;
+  height: 50vh;
 `;
 
-const Nav = styled(Row)`
-  padding: 0.5em;
-`;
+const Nav = styled(Row)``;
 
 const NavItemButton = styled.button`
   background-color: #1e1e24;
   border: none;
   padding: 0;
   border-radius: 0;
-  font-size: x-large;
-  height: 3em;
+  font-size: large;
 `;
 
 type NavItemImageProps = {
@@ -29,7 +26,6 @@ type NavItemImageProps = {
 const NavItemImage = styled.img<NavItemImageProps>`
   object-fit: contain;
   width: 5em;
-  height: 5em;
   filter: brightness(70%);
   ${(props) =>
     props.active
@@ -91,7 +87,7 @@ const ThumbnailCarousel = ({ pictureUrls }: ThumbnailCarouselProps) => {
         ))}
       </Row>
 
-      <Row className="thumbnail-carousel-nav">
+      <Nav>
         <Button
           value="left"
           disabled={index === 0}
@@ -128,7 +124,7 @@ const ThumbnailCarousel = ({ pictureUrls }: ThumbnailCarouselProps) => {
             style={{ pointerEvents: 'none' }}
           />
         </Button>
-      </Row>
+      </Nav>
     </Container>
   );
 };

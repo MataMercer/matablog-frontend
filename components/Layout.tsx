@@ -10,7 +10,11 @@ type LayoutProps = {
 };
 
 const Article = styled.article`
-  margin: 3em 20em 10em;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  max-width: 70em;
+  margin: 0 auto;
+  padding: 0.5em;
 `;
 
 const Layout = ({ children, title }: LayoutProps) => (

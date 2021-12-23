@@ -1,5 +1,6 @@
 import { Alert } from 'react-bootstrap';
-import { ApiError } from '../modelTypes/IApiError';
+import { ApiError } from '../Types/IApiError';
+
 type ErrorAlertProps = {
   errors: ApiError[];
 };

@@ -9,7 +9,9 @@ export default function Home() {
       <Layout title="Home">
         <section>
           <h1>Timeline</h1>
-          <PostListDisplay />
+          <PostListDisplay
+            postSearchForm={{ pageSize: 24, category: 'ROOT' }}
+          />
         </section>
       </Layout>
     </div>

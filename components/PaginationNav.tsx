@@ -14,17 +14,17 @@ export default function PaginationNav({
 
   for (let number = 1; number <= totalPages; number++) {
     items.push(
-      <Pagination.Item
+      <Link
         key={number}
-        active={number === page + 1}
-        onClick={() => {
-          router.push({
-            query: { page: number },
-          });
+        href={{
+          query: { page: number },
         }}
+        passHref
       >
-        {number}
-      </Pagination.Item>
+        <Pagination.Item key={number} active={number === page + 1}>
+          {number}
+        </Pagination.Item>
+      </Link>
     );
   }
 

@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState} from 'react';
 import ReactMarkdown from 'react-markdown';
 import Skeleton from 'react-loading-skeleton';
 import Layout from '../components/Layout';
-import { getAboutPage } from '../backend/repositories/AboutPageRepository';
-import ErrorAlert from '../components/ErrorAlert';
-
+import aboutmd from '../config/about.md';
 export default function About() {
   const [content, setContent] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('loading');

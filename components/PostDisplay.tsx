@@ -1,77 +1,72 @@
 /* eslint-disable no-unused-vars */
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useRouter } from 'next/router';
 import Skeleton from 'react-loading-skeleton';
 import ThumbnailCarousel from './ThumbnailCarousel';
 import ErrorAlert from './ErrorAlert';
 import usePost from '../backend/hooks/usePost';
-import IPost from '../modelTypes/IPost';
-import { Badge, Row, Col, Container, Modal, ModalBody } from 'react-bootstrap';
-type ProjectEntryProps = {
+import { Badge, Row, Col, Container } from 'react-bootstrap';
+import { getFileUrls } from '../backend/repositories/FileRepository';
+import DateLabel from './DateLabel';
+type PostDisplayProps = {
   postId?: string;
-  postLocal?: IPost;
   setPageTitle?: (pageTitle: string) => void;
 };
 
+const LoadingPlaceholder = () => (
+  <>
+    <Skeleton height={50} />
+    <Skeleton count={2} />
+    <Row>
+      <Col>
+        <Skeleton />
+      </Col>
+      <Col>
+        <Skeleton />
+      </Col>
+      <Col>
+        <Skeleton />
+      </Col>
+      <Col>
+        <Skeleton />
+      </Col>
+    </Row>
+    <Skeleton count={15} />
+  </>
+);
+
+type CarouselProps = {
+  pictureUrls: string[];
+};
+const Carousel = ({ pictureUrls }: CarouselProps) => (
+  <ThumbnailCarousel
+    pictureUrls={pictureUrls.length > 0 ? pictureUrls : ['/no-image.png']}
+  />
+);
+
 export default function PostDisplay({
   postId,
-  postLocal,
   setPageTitle,
-}: ProjectEntryProps) {
-  const [postState, setPostState] = useState<IPost>();
-  const {
-    post: fetchedPost,
-    status,
-    errors,
-  } = usePost({ initialLoad: !!postId, postId });
+}: PostDisplayProps) {
+  const { post, status, errors } = usePost({ initialLoad: !!postId, postId });
   const router = useRouter();
 
   useEffect(() => {
-    setPostState(postId ? fetchedPost : postLocal);
-    if (setPageTitle && postState) {
-      setPageTitle(postState.title);
+    if (setPageTitle && post) {
+      setPageTitle(post.title);
     }
-  }, [postId, fetchedPost, postLocal, setPageTitle, postState]);
+  }, [postId, setPageTitle]);
 
-  const Carousel = () => (
-    <ThumbnailCarousel
-      pictureUrls={
-        postState?.pictureUrls && postState.pictureUrls.length > 0
-          ? postState.pictureUrls
-          : ['/no-image.png']
-      }
-    />
-  );
-
-  const LoadingPlaceholder = () => (
-    <>
-      <Skeleton height={50} />
-      <Skeleton count={2} />
-      <Row>
-        <Col>
-          <Skeleton />
-        </Col>
-        <Col>
-          <Skeleton />
-        </Col>
-        <Col>
-          <Skeleton />
-        </Col>
-        <Col>
-          <Skeleton />
-        </Col>
-      </Row>
-      <Skeleton count={15} />
-    </>
-  );
+  const pictureUrls = post?.attachments ? getFileUrls(post?.attachments) : [];
 
   const Text = () => {
-    if (status === 'loading' && !postLocal) {
+    if (status === 'loading') {
       return <LoadingPlaceholder />;
     }
-    if (postState) {
-      const { title, content, tags } = postState;
+    if (post) {
+      const { title, content, tags } = post;
+      console.log(post);
       return (
         <>
           <Row>
@@ -80,57 +75,49 @@ export default function PostDisplay({
           <Row>
             <h2>{title}</h2>
           </Row>
-          {tags ? (
-            <Row>
-              {Object.keys(tags).map((tag) => (
-                <Badge key={tag} bg="info">
-                  {tag}
-                </Badge>
-              ))}
-            </Row>
-          ) : null}
           <Row>
             <ReactMarkdown>{content}</ReactMarkdown>
           </Row>
+          {tags && (
+            <div>
+              {tags.map((t) => (
+                <Badge bg="secondary" key={t.id}>
+                  {t.name}
+                </Badge>
+              ))}
+            </div>
+          )}
+
+          {post.createdAt && post.updatedAt && (
+            <>
+              <Row>
+                <DateLabel label="Created At: " date={post.createdAt} />
+              </Row>
+              <Row>
+                <DateLabel label="Updated At: " date={post.updatedAt} />
+              </Row>
+            </>
+          )}
         </>
       );
     }
     return <></>;
   };
 
-  return postId ? (
-    <Row>
-      <Col lg="8" className="project-entry-thumbnail-carousel-panel-no-modal">
-        <Container>
-          <Carousel />
-        </Container>
-      </Col>
-      <Col lg="4" className="project-entry-thumbnail-text-panel-no-modal">
-        <Modal.Header closeButton />
+  return (
+    <>
+      {pictureUrls.length > 0 && (
+        <Row className="project-entry-thumbnail-carousel-panel-no-modal">
+          <Container>
+            <Carousel pictureUrls={pictureUrls} />
+          </Container>
+        </Row>
+      )}
+      <Row className="project-entry-thumbnail-text-panel-no-modal">
         <Container>
           <Text />
         </Container>
-      </Col>
-    </Row>
-  ) : (
-    <Modal
-      contentClassName="project-entry-modal"
-      centered
-      size="xl"
-      toggle={() => router.push('/')}
-      isOpen={router.query.postId === postLocal?.id}
-    >
-      <Row>
-        <Col lg="8" className="project-entry-thumbnail-carousel-panel-modal">
-          <Carousel />
-        </Col>
-        <Col lg="4" className="project-entry-thumbnail-text-panel-modal">
-          <ModalBody>
-            <Modal.Header closeButton />
-            <Text />
-          </ModalBody>
-        </Col>
       </Row>
-    </Modal>
+    </>
   );
 }

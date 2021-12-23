@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useState } from 'react';
-import { IPostSearchForm } from '../../modelTypes/formTypes/IPostSearchForm';
-import { IPage, Pageable } from '../../modelTypes/IPage';
-import IPost from '../../modelTypes/IPost';
+import { IPostSearchForm } from '../../Types/requestTypes/IPostSearchRequest';
+import { IPage, Pageable } from '../../Types/IPage';
+import IPost from '../../Types/IPost';
 import { getPostsRequest } from '../repositories/PostRepository';
 import useGenericRequest from './util/useGenericRequest';
 

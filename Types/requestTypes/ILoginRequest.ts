@@ -1,4 +1,4 @@
-export type ILoginForm = {
+export type ILoginRequest = {
   username: string;
   password: string;
 };

@@ -13,7 +13,7 @@ export default function ProtectRoute(
     const { isAuthenticated, loading } = useAuth();
     useEffect(() => {
       if (!isAuthenticated && !loading) Router.push('/login');
-    }, [isAuthenticated]);
+    }, [isAuthenticated, loading]);
 
     return <Component {...args} />;
   };

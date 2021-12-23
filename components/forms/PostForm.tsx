@@ -6,13 +6,13 @@ import { useForm, Controller } from 'react-hook-form';
 import MarkdownEditorInput from '../inputs/MarkdownEditorInput';
 import UploadInput, { FileInput } from '../inputs/UploadInput';
 import ErrorAlert from '../ErrorAlert';
-import { IPostForm } from '../../modelTypes/formTypes/IPostForm';
+import { IPostRequest } from '../../Types/requestTypes/IPostRequest';
 import usePost from '../../backend/hooks/usePost';
-import IPost from '../../modelTypes/IPost';
+import IPost from '../../Types/IPost';
 import { createPostRequest } from '../../backend/repositories/PostRepository';
-import { IPostTag } from '../../modelTypes/IPostTag';
-import { RequestStatus } from '../../modelTypes/enums/RequestStatus';
-import { ApiError } from '../../modelTypes/IApiError';
+import IPostTag from '../../Types/IPostTag';
+import { RequestStatus } from '../../Types/enums/RequestStatus';
+import { ApiError } from '../../Types/IApiError';
 
 type PostFormProps = {
   postId: string;
@@ -55,7 +55,6 @@ export default function PostForm({ postId }: PostFormProps) {
     if (fetchedPost) {
       reset({
         postForm: fetchedPost,
-        pictureFiles: fetchedPost.pictureUrls.map((url: string) => ({ url })),
         reactTags: Object.keys(fetchedPost.tags).map((tagName) => ({
           id: tagName,
           text: tagName,
@@ -90,6 +89,7 @@ export default function PostForm({ postId }: PostFormProps) {
         ...data.postForm,
         tags: convertReactTagsToITags(),
         files: filesToUpload,
+        published: true,
       })
         .then(() => {
           setCreatePostStatus('succeeded');

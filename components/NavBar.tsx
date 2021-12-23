@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useAuth } from '../auth/AuthContext';
 import styled from 'styled-components';
-import { IUser } from '../modelTypes/IUser';
+import IUser from '../Types/IUser';
 import ThemeToggler from './ThemeToggler';
 import {
   faUser,
@@ -19,6 +19,7 @@ import {
   Button,
   InputGroup,
   FormControl,
+  Navbar,
 } from 'react-bootstrap';
 import React from 'react';
 
@@ -73,10 +74,12 @@ const AuthenticatedMenu: React.FC<AuthenticatedMenuProps> = ({ user }) => {
       </NavItem>
       <DropdownButton
         id="dropdown-basic-button"
-        title={user?.username}
+        title={`@${user?.activeBlog.blogName}`}
         variant="link"
       >
-        <Dropdown.Item href="#/action-1">Profile</Dropdown.Item>
+        <Link href={`/blog/${user?.activeBlog.blogName}`} passHref>
+          <Dropdown.Item>Profile</Dropdown.Item>
+        </Link>
         <Dropdown.Item href="#/action-2">Settings</Dropdown.Item>
         <Dropdown.Item
           onClick={() => {

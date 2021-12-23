@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { IPostSearchForm } from '../../modelTypes/formTypes/IPostSearchForm';
-import IPost from '../../modelTypes/IPost';
+import { IPostSearchForm } from '../../Types/requestTypes/IPostSearchRequest';
+import IPost from '../../Types/IPost';
 import { getPostRequest } from '../repositories/PostRepository';
 import useGenericRequest from './util/useGenericRequest';
 
@@ -17,7 +17,7 @@ function usePost({ initialLoad, postId }: UsePostProps) {
     if (initialLoad && postId) {
       callRequest(getPostRequest(postId));
     }
-  }, []);
+  }, [postId]);
 
   useEffect(() => {
     if (status === 'succeeded') {

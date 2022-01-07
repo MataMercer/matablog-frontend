@@ -5,7 +5,7 @@ import IPost from '../../Types/IPost';
 import { IPage } from '../../Types/IPage';
 import IFile from '../../Types/IFile';
 
-const getPostRequest = async (postId: string) => {
+async function getPostRequest(postId: string) {
   const response = await axios({
     method: 'get',
     url: `/post/${postId}`,
@@ -15,7 +15,7 @@ const getPostRequest = async (postId: string) => {
   } as IPost;
 };
 
-const getPostsRequest = async (postSearchForm: IPostSearchForm) => {
+async function getPostsRequest(postSearchForm: IPostSearchForm) {
   const response = await axios({
     method: 'get',
     url: '/post/',

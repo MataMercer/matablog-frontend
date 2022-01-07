@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { Container, Button, Modal, Row, Col, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
@@ -11,6 +11,8 @@ import { getFileUrls } from '../backend/repositories/FileRepository';
 import DateLabel from './DateLabel';
 import LikeButton from './LikeButton';
 import { useAuth } from '../auth/AuthContext';
+import useGenericRequest from '../backend/hooks/util/useGenericRequest';
+import usePost from '../backend/hooks/usePost';
 
 const ThumbnailImg = styled.img`
   object-fit: contain;
@@ -19,8 +21,26 @@ const ThumbnailImg = styled.img`
 `;
 
 const PostThumbnail = (props: IPost) => {
-  const { id, title, attachments, tags, blog, createdAt, likes } = props;
+  const [post, setPost] = useState<IPost>(props);
+  const { id, title, attachments, tags, blog, createdAt, likes } = post;
   const { user } = useAuth();
+  const {
+    post: fetchedPost,
+    fetchPost,
+    status,
+    errors,
+  } = usePost({ initialLoad: false, postId: id });
+
+  const fetchPostWrapper = useCallback(() => {
+    console.log('reloading triggered.');
+    fetchPost();
+  }, [fetchPost]);
+
+  useEffect(() => {
+    if (fetchedPost && status === 'succeeded') {
+      setPost(fetchedPost);
+    }
+  }, [fetchedPost, status]);
 
   const pictureUrls = attachments ? getFileUrls(attachments) : [];
   return (
@@ -58,6 +78,7 @@ const PostThumbnail = (props: IPost) => {
             postId={id as string}
             liked={!!likes?.find((l) => l.liker.id === user?.activeBlog.id)}
             likeCount={likes?.length}
+            fetchPost={fetchPostWrapper}
           />
         </Row>
       </div>

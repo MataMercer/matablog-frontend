@@ -1,7 +1,6 @@
-import { useEffect } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IPostSearchForm } from '../../Types/requestTypes/IPostSearchRequest';
-import { IPage, Pageable } from '../../Types/IPage';
+import { IPage } from '../../Types/IPage';
 import IPost from '../../Types/IPost';
 import { getPostsRequest } from '../repositories/PostRepository';
 import useGenericRequest from './util/useGenericRequest';
@@ -12,19 +11,32 @@ type UsePostsProps = {
 };
 
 function usePosts({ initialLoad, postSearchForm }: UsePostsProps) {
-  const { status, errors, callRequest, data } = useGenericRequest<IPage<IPost>>();
+  const { callRequest, data, status, errors } =
+    useGenericRequest<IPage<IPost>>();
   const [postsPage, setPostsPage] = useState<IPage<IPost>>();
   useEffect(() => {
     if (initialLoad) {
-      callRequest(getPostsRequest(postSearchForm));
+      callRequest(
+        getPostsRequest({
+          page: postSearchForm.page,
+          category: postSearchForm.category,
+          blogName: postSearchForm.blogName,
+        })
+      );
     }
-  }, [postSearchForm.page, initialLoad]);
+  }, [
+    initialLoad,
+    callRequest,
+    postSearchForm.page,
+    postSearchForm.category,
+    postSearchForm.blogName,
+  ]);
 
   useEffect(() => {
     if (status === 'succeeded' && data) {
       setPostsPage(data);
     }
-  }, [data]);
+  }, [data, status]);
 
   return {
     postsPage,

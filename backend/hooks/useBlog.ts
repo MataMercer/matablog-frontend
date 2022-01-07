@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import IBlog from '../../Types/IBlog';
 import useGenericRequest from './util/useGenericRequest';
-import { getBlogByIdRequest, getBlogByNameRequest } from '../repositories/BlogRepository';
+import {
+  getBlogByIdRequest,
+  getBlogByNameRequest,
+} from '../repositories/BlogRepository';
 
 type UseBlogProps = {
   initialLoad?: boolean;
@@ -10,7 +13,7 @@ type UseBlogProps = {
 };
 
 function useBlog({ initialLoad, blogId, blogName }: UseBlogProps) {
-  const { status, errors, callRequest, data } = useGenericRequest<IBlog>();
+  const { callRequest, data, status, errors } = useGenericRequest<IBlog>();
   const [blog, setBlog] = useState<IBlog>();
 
   useEffect(() => {
@@ -22,16 +25,15 @@ function useBlog({ initialLoad, blogId, blogName }: UseBlogProps) {
         callRequest(getBlogByNameRequest(blogName));
       }
     }
-  }, [blogId, blogName]);
+  }, [blogId, blogName, callRequest, initialLoad]);
 
   useEffect(() => {
     if (status === 'succeeded') {
       setBlog(data);
     }
-  }, [data])
+  }, [data, status]);
 
   return { blog, status, errors };
 }
 
 export default useBlog;
-

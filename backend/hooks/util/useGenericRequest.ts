@@ -9,21 +9,23 @@ function useGenericRequest<T>() {
 
   const callRequest = useCallback(
     async (request: Promise<any>) => {
+      console.log('sending request...');
       setStatus('loading');
       try {
         const res = await request;
+        console.log('request success!');
         setStatus('succeeded');
         setErrors([]);
         setData(res);
       } catch (err: any) {
-        setErrors([...errors, err]);
+        setErrors([err]);
         setStatus('error');
         setData(undefined);
       }
     },
-    [errors]
+    []
   );
 
-  return { status, errors, callRequest, data };
+  return { callRequest, data, status, errors };
 }
 export default useGenericRequest;

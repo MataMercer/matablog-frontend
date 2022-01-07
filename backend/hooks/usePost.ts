@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { IPostSearchForm } from '../../Types/requestTypes/IPostSearchRequest';
 import IPost from '../../Types/IPost';
 import { getPostRequest } from '../repositories/PostRepository';
@@ -10,22 +10,28 @@ type UsePostProps = {
 };
 
 function usePost({ initialLoad, postId }: UsePostProps) {
-  const { status, errors, callRequest, data } = useGenericRequest<IPost>();
+  const { callRequest, data, status, errors } = useGenericRequest<IPost>();
   const [post, setPost] = useState<IPost>();
 
   useEffect(() => {
     if (initialLoad && postId) {
       callRequest(getPostRequest(postId));
     }
-  }, [postId]);
+  }, [initialLoad, callRequest, postId]);
 
   useEffect(() => {
     if (status === 'succeeded') {
       setPost(data);
     }
-  }, [data])
+  }, [data, status]);
 
-  return { post, status, errors };
+  const fetchPost = useCallback(() => {
+    if (postId) {
+      callRequest(getPostRequest(postId));
+    }
+  }, [callRequest, postId]);
+
+  return { post, fetchPost, status, errors };
 }
 
 export default usePost;

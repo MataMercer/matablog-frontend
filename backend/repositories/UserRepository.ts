@@ -1,15 +1,17 @@
-import axios from 'axios';
+import { AxiosInstance } from 'axios';
 import { IAuthTokens } from '../../Types/IAuthTokens';
 import { ILoginRequest } from '../../Types/requestTypes/ILoginRequest';
 import IUser from '../../Types/IUser';
+import { IRefreshTokenRequest } from '../../Types/requestTypes/IRefreshTokenRequest';
+import api from '../config/AxiosApiInstance';
 
-async function loginRequest({ username, password }: ILoginRequest) {
+export async function loginRequest({ username, password }: ILoginRequest) {
   const data = {
     username,
     password,
   };
 
-  return axios({
+  return api({
     method: 'POST',
     url: '/auth/login',
     data,
@@ -22,12 +24,11 @@ async function loginRequest({ username, password }: ILoginRequest) {
   });
 }
 
-async function getCurrentUserRequest() {
-  return axios({
+export async function getCurrentUserRequest() {
+  return api({
     method: 'get',
     url: '/user/currentuser',
   }).then((response) => {
-    console.log(response);
     const userRes: IUser = {
       id: response.data.id,
       username: response.data.username,
@@ -37,6 +38,12 @@ async function getCurrentUserRequest() {
   });
 }
 
-
-
-export { getCurrentUserRequest, loginRequest };
+export async function refreshTokenRequest(
+  refreshTokenRequestData: IRefreshTokenRequest
+) {
+  return api({
+    method: 'POST',
+    url: '/auth/refreshtoken',
+    data: refreshTokenRequestData,
+  });
+}

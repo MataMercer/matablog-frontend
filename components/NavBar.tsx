@@ -4,14 +4,7 @@ import { useAuth } from '../auth/AuthContext';
 import styled from 'styled-components';
 import IUser from '../Types/IUser';
 import ThemeToggler from './ThemeToggler';
-import {
-  faUser,
-  faBars,
-  faBell,
-  faEnvelope,
-  faEllipsisH,
-  faSearch,
-} from '@fortawesome/free-solid-svg-icons';
+import { faEllipsisH, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   DropdownButton,

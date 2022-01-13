@@ -11,7 +11,6 @@ import { getFileUrls } from '../backend/repositories/FileRepository';
 import DateLabel from './DateLabel';
 import LikeButton from './LikeButton';
 import { useAuth } from '../auth/AuthContext';
-import useGenericRequest from '../backend/hooks/util/useGenericRequest';
 import usePost from '../backend/hooks/usePost';
 
 const ThumbnailImg = styled.img`
@@ -20,29 +19,20 @@ const ThumbnailImg = styled.img`
   width: 100%;
 `;
 
-const PostThumbnail = (props: IPost) => {
+export default function PostThumbnail(props: IPost) {
+  const { user } = useAuth();
+
   const [post, setPost] = useState<IPost>(props);
   const { id, title, attachments, tags, blog, createdAt, likes } = post;
-  const { user } = useAuth();
-  const {
-    post: fetchedPost,
-    fetchPost,
-    status,
-    errors,
-  } = usePost({ initialLoad: false, postId: id });
-
-  const fetchPostWrapper = useCallback(() => {
-    console.log('reloading triggered.');
-    fetchPost();
-  }, [fetchPost]);
+  const { data: fetchedPost } = usePost({ postId: id });
+  const pictureUrls = attachments ? getFileUrls(attachments) : [];
 
   useEffect(() => {
-    if (fetchedPost && status === 'succeeded') {
+    if (fetchedPost) {
       setPost(fetchedPost);
     }
-  }, [fetchedPost, status]);
+  }, [fetchedPost]);
 
-  const pictureUrls = attachments ? getFileUrls(attachments) : [];
   return (
     <Container className="project-entry" color="primary">
       <Row>
@@ -78,12 +68,9 @@ const PostThumbnail = (props: IPost) => {
             postId={id as string}
             liked={!!likes?.find((l) => l.liker.id === user?.activeBlog.id)}
             likeCount={likes?.length}
-            fetchPost={fetchPostWrapper}
           />
         </Row>
       </div>
     </Container>
   );
-};
-
-export default PostThumbnail;
+}

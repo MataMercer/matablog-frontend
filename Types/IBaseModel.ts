@@ -1,6 +1,3 @@
-
 export default interface IBaseModel {
-  id?: string;
+  id: string;
 }
-
-

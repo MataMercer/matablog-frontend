@@ -1,9 +1,9 @@
 import React from 'react';
 import { Spinner } from 'react-bootstrap';
-import { RequestStatus } from '../Types/enums/RequestStatus';
+import { QueryStatus } from 'react-query';
 
 type CenterSpinnerProps = {
-  status: RequestStatus;
+  status: QueryStatus;
 };
 export default function CenterSpinner({ status }: CenterSpinnerProps) {
   return (

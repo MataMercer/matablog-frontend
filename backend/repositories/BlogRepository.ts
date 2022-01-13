@@ -1,9 +1,8 @@
-import axios from "axios";
-import IBlog from "../../Types/IBlog";
-
+import IBlog from '../../Types/IBlog';
+import api from '../config/AxiosApiInstance';
 
 async function getBlogByNameRequest(blogName: String) {
-  const response = await axios({
+  const response = await api({
     method: 'get',
     url: `/blog/name/${blogName}`,
   });
@@ -12,7 +11,7 @@ async function getBlogByNameRequest(blogName: String) {
   } as IBlog;
 }
 async function getBlogByIdRequest(id: String) {
-  const response = await axios({
+  const response = await api({
     method: 'get',
     url: `/blog/${id}`,
   });
@@ -22,14 +21,12 @@ async function getBlogByIdRequest(id: String) {
 }
 
 async function followBlog(id: string) {
-  return axios({
+  return api({
     method: 'put',
     url: `/blog/${id}`,
   }).then((response) => {
     console.log(response);
-
-
   });
 }
 
-export { getBlogByNameRequest, getBlogByIdRequest }
+export { getBlogByNameRequest, getBlogByIdRequest };

@@ -1,31 +1,31 @@
-import axios from 'axios';
+import { AxiosInstance } from 'axios';
 import { IPostRequest } from '../../Types/requestTypes/IPostRequest';
 import { IPostSearchForm } from '../../Types/requestTypes/IPostSearchRequest';
 import IPost from '../../Types/IPost';
 import { IPage } from '../../Types/IPage';
 import IFile from '../../Types/IFile';
+import api from '../config/AxiosApiInstance';
 
 async function getPostRequest(postId: string) {
-  const response = await axios({
+  const response = await api({
     method: 'get',
     url: `/post/${postId}`,
   });
   return {
     ...response.data,
   } as IPost;
-};
+}
 
 async function getPostsRequest(postSearchForm: IPostSearchForm) {
-  const response = await axios({
+  const response = await api({
     method: 'get',
     url: '/post/',
     params: postSearchForm,
   });
-  console.log(response.data.content);
   return {
     ...response.data,
   } as IPage<IPost>;
-};
+}
 
 const createPostRequest = async (postData: IPostRequest) => {
   const convertJsonListToFormDataList = (input: string[]) => {
@@ -38,7 +38,7 @@ const createPostRequest = async (postData: IPostRequest) => {
   formData.append('title', postData.title);
   formData.append(
     'postTags',
-    convertJsonListToFormDataList(postData.tags.map(tag => tag.name))
+    convertJsonListToFormDataList(postData.tags.map((tag) => tag.name))
   );
   formData.append('content', postData.content);
   formData.append(
@@ -51,8 +51,7 @@ const createPostRequest = async (postData: IPostRequest) => {
     formData.append('files', file);
   });
 
-
-  const response = await axios({
+  const response = await api({
     method: 'post',
     url: '/post/create',
     headers: {
@@ -63,10 +62,10 @@ const createPostRequest = async (postData: IPostRequest) => {
   return response.data as IPost;
 };
 
-const updatePostRequest = async (postData: IPost) => { };
+const updatePostRequest = async (postData: IPost) => {};
 
 const deletePostRequest = async (id: string) => {
-  const response = await axios({
+  const response = await api({
     method: 'delete',
     url: `/post/${id}`,
   });
@@ -76,12 +75,12 @@ const deletePostRequest = async (id: string) => {
 };
 
 const likePostRequest = async (id: string, isLike: boolean) => {
-  const response = await axios({
+  const response = await api({
     method: isLike ? 'post' : 'delete',
     url: `/post/${id}/like`,
   });
   return response.data;
-}
+};
 
 export {
   getPostRequest,

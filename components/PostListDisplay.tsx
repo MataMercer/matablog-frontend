@@ -23,8 +23,11 @@ export default function PostListDisplay({
   const page =
     params && params.page ? parseInt(params.page as string, 10) - 1 : 0;
 
-  const { postsPage, status, errors } = usePosts({
-    initialLoad: !!params && !!postSearchForm,
+  const {
+    data: postsPage,
+    status,
+    errors,
+  } = usePosts({
     postSearchForm: {
       ...postSearchForm,
       page,

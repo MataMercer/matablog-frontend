@@ -1,15 +1,15 @@
 import https from 'https';
 
-const axiosConfig = {
+const axiosApiConfig = {
   httpsAgent: new https.Agent({
     rejectUnauthorized: false,
   }),
   baseURL: 'http://localhost:8080/api/v1/',
   timeout: 2000,
   headers: {
-    'Access-Control-Allow-Headers': ['authorization', 'refreshtoken'],
+    'Access-Control-Allow-Headers': ['Authorization', 'refreshToken'],
   },
   withCredentials: true,
 };
 
-export default axiosConfig;
+export default axiosApiConfig;

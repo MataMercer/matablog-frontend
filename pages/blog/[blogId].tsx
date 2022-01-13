@@ -3,16 +3,14 @@ import { useState } from 'react';
 import BlogProfile from '../../components/BlogProfile';
 import Layout from '../../components/Layout';
 
-const UserProfilePage = () => {
+export default function UserProfilePage() {
   const router = useRouter();
-  const { blogname } = router.query;
+  const { blogId } = router.query;
 
   const [title, setTitle] = useState<string>('Blog Profile');
   return (
     <Layout title={title}>
-      <BlogProfile blogName={blogname as string} />
+      <BlogProfile blogName={blogId as string} />
     </Layout>
   );
-};
-
-export default UserProfilePage;
+}

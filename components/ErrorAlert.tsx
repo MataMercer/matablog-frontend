@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-useless-fragment */
 import { Alert } from 'react-bootstrap';
 import { ApiError } from '../Types/IApiError';
 
@@ -5,7 +6,7 @@ type ErrorAlertProps = {
   errors: ApiError[];
 };
 
-const ErrorAlert = ({ errors }: ErrorAlertProps) => {
+export default function ErrorAlert({ errors }: ErrorAlertProps) {
   return (
     <>
       {errors.length > 0
@@ -18,6 +19,4 @@ const ErrorAlert = ({ errors }: ErrorAlertProps) => {
         : null}
     </>
   );
-};
-
-export default ErrorAlert;
+}

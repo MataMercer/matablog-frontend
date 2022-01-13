@@ -17,26 +17,26 @@ const Article = styled.article`
   padding: 0.5em;
 `;
 
-const Layout = ({ children, title }: LayoutProps) => (
-  <div>
-    <Head>
-      <title>{`${title} - MataBlog`}</title>
-      <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <meta name="description" content="A small blog for Mercer Denholm" />
-    </Head>
-
+export default function Layout({ children, title }: LayoutProps) {
+  return (
     <div>
-      <header>
-        <NavBar />
-      </header>
+      <Head>
+        <title>{`${title} - MataBlog`}</title>
+        <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="A small blog for Mercer Denholm" />
+      </Head>
 
-      <main>
-        <Article>{children}</Article>
-      </main>
-      <Footer />
+      <div>
+        <header>
+          <NavBar />
+        </header>
+
+        <main>
+          <Article>{children}</Article>
+        </main>
+        <Footer />
+      </div>
     </div>
-  </div>
-);
-
-export default Layout;
+  );
+}

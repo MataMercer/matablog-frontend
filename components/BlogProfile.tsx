@@ -1,24 +1,35 @@
-import router from 'next/router';
+import { useEffect } from 'react';
 import { Button, Row } from 'react-bootstrap';
 import useBlog from '../backend/hooks/useBlog';
 import CenterSpinner from './CenterSpinner';
 import ErrorAlert from './ErrorAlert';
 import PostCategoryTabs from './PostCategoryTabs';
-import PostListDisplay from './PostListDisplay';
 
 type BlogProfileProps = {
-  blogName: string;
-  setPageTitle?: (pageTitle: string) => void;
+  blogId: string;
+  setPageTitle: (pageTitle: string) => void;
 };
 
-export default function BlogProfile({ blogName }: BlogProfileProps) {
-  const { blog, status, errors } = useBlog({
-    initialLoad: !!blogName,
-    blogName,
+export default function BlogProfile({
+  blogId,
+  setPageTitle,
+}: BlogProfileProps) {
+  const {
+    data: blog,
+    error,
+    status,
+  } = useBlog({
+    blogId,
   });
+
+  useEffect(() => {
+    if (status === 'success' && blog) {
+      setPageTitle('blog');
+    }
+  }, [status]);
   return (
     <>
-      <ErrorAlert errors={errors} />
+      <ErrorAlert errors={[]} />
       <CenterSpinner status={status} />
       {blog && (
         <>
@@ -26,12 +37,12 @@ export default function BlogProfile({ blogName }: BlogProfileProps) {
             <h1>{`${blog?.preferredBlogName}`}</h1>
           </Row>
           <Row>
-            <h2>{`@${blogName}`}</h2>
+            <h2>{`@${blog.blogName}`}</h2>
           </Row>
           <Row>
             <Button>Follow</Button>
           </Row>
-          <PostCategoryTabs postSearchForm={{ blogName }} />
+          <PostCategoryTabs postSearchForm={{ blogName: blog.blogName }} />
         </>
       )}
     </>

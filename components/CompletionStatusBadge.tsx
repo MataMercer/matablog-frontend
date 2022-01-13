@@ -4,7 +4,9 @@ type CompletionStatusBadgeProps = {
   completionStatus: string;
 };
 
-const CompletionStatusBadge = (props: CompletionStatusBadgeProps) => {
+export default function CompletionStatusBadge(
+  props: CompletionStatusBadgeProps
+) {
   const { completionStatus } = props;
   switch (completionStatus) {
     case 'inProgress':
@@ -14,8 +16,6 @@ const CompletionStatusBadge = (props: CompletionStatusBadgeProps) => {
     case 'onHold':
       return <Badge color="secondary">On Hold</Badge>;
     default:
-      return <></>;
+      return null;
   }
-};
-
-export default CompletionStatusBadge;
+}

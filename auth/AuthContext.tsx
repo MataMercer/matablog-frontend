@@ -1,10 +1,16 @@
 // eslint-disable-next-line no-use-before-define
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  useMemo,
+  useCallback,
+} from 'react';
 import Router from 'next/router';
 // eslint-disable-next-line no-unused-vars
 import IUser from '../Types/IUser';
 import useAuthToken from '../backend/hooks/useAuthToken';
-import useAxiosConfig from '../backend/hooks/useAxiosConfig';
 import { RequestStatus } from '../Types/enums/RequestStatus';
 import {
   getCurrentUserRequest,
@@ -12,6 +18,7 @@ import {
 } from '../backend/repositories/UserRepository';
 import { ILoginRequest } from '../Types/requestTypes/ILoginRequest';
 import { ApiError } from '../Types/IApiError';
+import { decodeJwt } from './JwtUtil';
 
 type AuthContextProps = {
   login: (loginForm: ILoginRequest) => void;
@@ -21,6 +28,9 @@ type AuthContextProps = {
   isAuthenticated: boolean;
   user: IUser | null;
   loginError?: ApiError;
+  accessToken: string;
+  refreshToken: string;
+  setAccessToken: (arg0: string) => void;
 };
 
 const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
@@ -29,7 +39,7 @@ type AuthProviderProps = {
   children: React.ReactNode;
 };
 
-export const AuthProvider = ({ children }: AuthProviderProps) => {
+export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<IUser | null>(null);
   const { accessToken, refreshToken, setAccessToken, setRefreshToken } =
     useAuthToken();
@@ -42,28 +52,34 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [currentUserError, setCurrentUserError] = useState<ApiError>();
 
   const loading = currentUserStatus === 'loading' || loginStatus === 'loading';
-  const { authorization } = useAxiosConfig({ accessToken, setAccessToken });
 
   useEffect(() => {
     async function loadUser() {
-      getCurrentUserRequest()
-        .then((fetchedUser) => {
-          setUser(fetchedUser);
-          setCurrentUserStatus('succeeded');
-          setCurrentUserError(undefined);
-        })
-        .catch((ex) => {
-          setUser(null);
-          setCurrentUserStatus('error');
-          setCurrentUserError(ex);
-        });
+      const decodedAccessToken: any = decodeJwt(accessToken);
+      const userData: IUser = {
+        id: decodedAccessToken.userId,
+        username: decodedAccessToken.username,
+        activeBlog: { id: decodedAccessToken.activeBlogId },
+      };
+      setUser(userData);
+      // getCurrentUserRequest()
+      //   .then((fetchedUser: any) => {
+      //     setUser(fetchedUser);
+      //     setCurrentUserStatus('succeeded');
+      //     setCurrentUserError(undefined);
+      //   })
+      //   .catch((ex: ApiError) => {
+      //     setUser(null);
+      //     setCurrentUserStatus('error');
+      //     setCurrentUserError(ex);
+      //   });
     }
-    if (authorization) {
+    if (accessToken) {
       loadUser();
     } else {
       setUser(null);
     }
-  }, [authorization]);
+  }, [accessToken]);
 
   const redirectAfterLogin = () => {
     Router.push('/');
@@ -73,60 +89,63 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     Router.push('/login');
   };
 
-  useEffect(() => {
-    console.log(`User changed to: ${user}`);
-  }, [user]);
+  const login = useCallback(
+    (loginForm: ILoginRequest) => {
+      loginRequest(loginForm)
+        .then((res: any) => {
+          setAccessToken(res.accessToken);
+          setRefreshToken(res.refreshToken);
+          setLoginError(undefined);
+          setLoginStatus('succeeded');
+          redirectAfterLogin();
+        })
+        .catch((ex: ApiError) => {
+          setLoginError(ex);
+          setLoginStatus('error');
+        });
+    },
+    [setAccessToken, setRefreshToken]
+  );
 
-  const login = (loginForm: ILoginRequest) => {
-    loginRequest(loginForm)
-      .then((res) => {
-        setAccessToken(res.accessToken);
-        setRefreshToken(res.refreshToken);
-        setLoginError(undefined);
-        setLoginStatus('succeeded');
-        redirectAfterLogin();
-      })
-      .catch((ex) => {
-        setLoginError(ex);
-        setLoginStatus('error');
-      });
-  };
-
-  const logout = () => {
-    // auth
-    //   ?.signOut()
-    //   .then(() => {
-    //     setUser(null);
-    //     redirectAfterLogout();
-    //     // Sign-out successful.
-    //   })
-    //   .catch((error: FirebaseError) => {
-    //     // An error happened.
-    //   });
+  const logout = useCallback(() => {
     setAccessToken('');
     setRefreshToken('');
     setUser(null);
     redirectAfterLogout();
-  };
+  }, [setAccessToken, setRefreshToken]);
+
+  const contextData = useMemo(
+    () => ({
+      isAuthenticated: !!user,
+      user,
+      login,
+      loading,
+      logout,
+      loginError,
+      loginStatus,
+      accessToken: accessToken || '',
+      refreshToken: refreshToken || '',
+      setAccessToken,
+    }),
+    [
+      accessToken,
+      loading,
+      login,
+      loginError,
+      loginStatus,
+      logout,
+      refreshToken,
+      setAccessToken,
+      user,
+    ]
+  );
 
   return (
-    <AuthContext.Provider
-      value={{
-        isAuthenticated: !!user,
-        user,
-        login,
-        loading,
-        logout,
-        loginError,
-        loginStatus,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={contextData}>{children}</AuthContext.Provider>
   );
-};
+}
 
-export const useAuth = () => {
+export function useAuth() {
   const authContext = useContext(AuthContext);
   return authContext;
-};
+}

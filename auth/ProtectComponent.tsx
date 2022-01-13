@@ -7,7 +7,7 @@ type ProtectComponentProps = {
 
 export default function ProtectComponent({ children }: ProtectComponentProps) {
   const { isAuthenticated, loading } = useAuth();
-  if (!isAuthenticated && !loading) {
+  if (!isAuthenticated || !loading) {
     return <></>;
   }
   return <>{children}</>;

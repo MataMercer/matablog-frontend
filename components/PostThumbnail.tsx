@@ -20,21 +20,12 @@ const ThumbnailImg = styled.img`
   width: 100%;
 `;
 
-export default function PostThumbnail(props: IPost) {
+export default function PostThumbnail(post: IPost) {
   const { user } = useAuth();
 
   const queryClient = useQueryClient();
-  const [post, setPost] = useState<IPost>(props);
-  const [enableQuery, setEnableQuery] = useState<boolean>(false);
-  const { id, title, attachments, tags, blog, createdAt, likes } = post;
-  const { data: fetchedPost } = usePost({ postId: id, enabled: enableQuery });
+  const { id, title, attachments, postTags, blog, createdAt, likes } = post;
   const pictureUrls = attachments ? getFileUrls(attachments) : [];
-
-  useEffect(() => {
-    if (fetchedPost) {
-      setPost(fetchedPost);
-    }
-  }, [fetchedPost]);
 
   return (
     <Container className="project-entry" color="primary">
@@ -72,8 +63,7 @@ export default function PostThumbnail(props: IPost) {
             liked={!!likes?.find((l) => l.liker.id === user?.activeBlog.id)}
             likeCount={likes?.length}
             onSuccess={() => {
-              setEnableQuery(true);
-              queryClient.invalidateQueries(['post', id]);
+              queryClient.invalidateQueries('posts');
             }}
           />
         </Row>

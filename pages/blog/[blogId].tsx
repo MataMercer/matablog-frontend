@@ -10,7 +10,7 @@ export default function UserProfilePage() {
   const [title, setTitle] = useState<string>('Blog Profile');
   return (
     <Layout title={title}>
-      <BlogProfile blogName={blogId as string} />
+      <BlogProfile blogId={blogId as string} setPageTitle={setTitle} />
     </Layout>
   );
 }

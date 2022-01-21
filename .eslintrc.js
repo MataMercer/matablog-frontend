@@ -37,6 +37,8 @@ module.exports = {
     // Nextjs doesn't require react import.
     'react-hooks/rules-of-hooks': 'warn',
     // show errors when not following rules of hooks.
+    'react/require-default-props': 'off',
+    'no-param-reassign': 'warn',
     'no-unused-expressions': [
       'warn',
       {

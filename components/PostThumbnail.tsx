@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
 import styled from 'styled-components';
+import { useQueryClient } from 'react-query';
 import CompletionStatusBadge from './CompletionStatusBadge';
 import IPost from '../Types/IPost';
 import { getFileUrls } from '../backend/repositories/FileRepository';
@@ -22,9 +23,11 @@ const ThumbnailImg = styled.img`
 export default function PostThumbnail(props: IPost) {
   const { user } = useAuth();
 
+  const queryClient = useQueryClient();
   const [post, setPost] = useState<IPost>(props);
+  const [enableQuery, setEnableQuery] = useState<boolean>(false);
   const { id, title, attachments, tags, blog, createdAt, likes } = post;
-  const { data: fetchedPost } = usePost({ postId: id });
+  const { data: fetchedPost } = usePost({ postId: id, enabled: enableQuery });
   const pictureUrls = attachments ? getFileUrls(attachments) : [];
 
   useEffect(() => {
@@ -56,7 +59,7 @@ export default function PostThumbnail(props: IPost) {
           </Link>
         </Row>
         <Row>
-          <Link href={`/blog/${blog.blogName}`} passHref>
+          <Link href={`/blog/${blog.id}`} passHref>
             <a>
               <h3>{`@${blog.blogName}`}</h3>
             </a>
@@ -68,6 +71,10 @@ export default function PostThumbnail(props: IPost) {
             postId={id as string}
             liked={!!likes?.find((l) => l.liker.id === user?.activeBlog.id)}
             likeCount={likes?.length}
+            onSuccess={() => {
+              setEnableQuery(true);
+              queryClient.invalidateQueries(['post', id]);
+            }}
           />
         </Row>
       </div>

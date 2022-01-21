@@ -52,16 +52,20 @@ function Carousel({ pictureUrls }: CarouselProps) {
   );
 }
 
-function Text({ data: post, error, status }: UseQueryResult<IPost, ApiError>) {
+type TextProps = {
+  queryResult: UseQueryResult<IPost, ApiError>;
+};
+function Text({ queryResult }: TextProps) {
+  const { data: post, status, error } = queryResult;
   if (status === 'loading') {
     return <LoadingPlaceholder />;
   }
   if (post) {
-    const { title, content, tags } = post;
+    const { title, content, postTags } = post;
     return (
       <>
         <Row>
-          <ErrorAlert errors={error ? [error] : []} />
+          <ErrorAlert error={error} />
         </Row>
         <Row>
           <h2>{title}</h2>
@@ -69,9 +73,9 @@ function Text({ data: post, error, status }: UseQueryResult<IPost, ApiError>) {
         <Row>
           <ReactMarkdown>{content}</ReactMarkdown>
         </Row>
-        {tags && (
+        {postTags && (
           <div>
-            {tags.map((t) => (
+            {postTags.map((t) => (
               <Badge bg="secondary" key={t.id}>
                 {t.name}
               </Badge>
@@ -98,16 +102,16 @@ export default function PostDisplay({
   postId,
   setPageTitle,
 }: PostDisplayProps) {
-  const { data: post, status, error } = usePost({ postId });
+  const useQueryResult = usePost({ postId });
+  const { data: post, status, error } = useQueryResult;
   const router = useRouter();
 
   useEffect(() => {
     if (setPageTitle && post) {
       setPageTitle(post.title);
     }
-  }, [postId, setPageTitle]);
+  }, [post, postId, setPageTitle]);
 
-  const api = useApi();
   const pictureUrls = post?.attachments ? getFileUrls(post?.attachments) : [];
 
   return (
@@ -121,7 +125,7 @@ export default function PostDisplay({
       )}
       <Row className="project-entry-thumbnail-text-panel-no-modal">
         <Container>
-          <Text />
+          <Text queryResult={useQueryResult} />
         </Container>
       </Row>
     </>

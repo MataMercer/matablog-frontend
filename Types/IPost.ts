@@ -7,7 +7,7 @@ import IPostTag from './IPostTag';
 export default interface IPost extends IBaseModel {
   title: string;
   content: string;
-  tags: IPostTag[];
+  postTags: IPostTag[];
   attachments?: IFile[];
   createdAt?: string;
   updatedAt?: string;
@@ -17,4 +17,3 @@ export default interface IPost extends IBaseModel {
   blog: IBlog;
   likes: ILike[];
 }
-

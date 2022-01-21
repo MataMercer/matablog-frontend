@@ -12,7 +12,7 @@ type ProjectEntryListItemProps = {
   deleteProjectEntryAndCleanUpFiles: (projectEntry: IProjectEntry) => void;
 };
 
-const ProjectEntryListItem = ({
+export default function ProjectEntryListItem({
   projectEntry,
   deleteProjectEntryAndCleanUpFiles,
 }: ProjectEntryListItemProps) => {
@@ -88,4 +88,3 @@ const ProjectEntryListItem = ({
   );
 };
 
-export default ProjectEntryListItem;

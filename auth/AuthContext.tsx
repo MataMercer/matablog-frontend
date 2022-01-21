@@ -19,6 +19,9 @@ import {
 import { ILoginRequest } from '../Types/requestTypes/ILoginRequest';
 import { ApiError } from '../Types/IApiError';
 import { decodeJwt } from './JwtUtil';
+import useBlog from '../backend/hooks/useBlog';
+import UserRole, { UserRoleAuths } from '../Types/enums/UserRole';
+import UserAuthority from '../Types/enums/UserAuthority';
 
 type AuthContextProps = {
   login: (loginForm: ILoginRequest) => void;
@@ -31,6 +34,7 @@ type AuthContextProps = {
   accessToken: string;
   refreshToken: string;
   setAccessToken: (arg0: string) => void;
+  hasAuthority: (arg0?: UserAuthority) => boolean;
 };
 
 const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
@@ -60,6 +64,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         id: decodedAccessToken.userId,
         username: decodedAccessToken.username,
         activeBlog: { id: decodedAccessToken.activeBlogId },
+        role: decodedAccessToken.userRole,
+        authorities: UserRoleAuths[decodedAccessToken.userRole as UserRole],
       };
       setUser(userData);
       // getCurrentUserRequest()
@@ -114,9 +120,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
     redirectAfterLogout();
   }, [setAccessToken, setRefreshToken]);
 
+  const hasAuthority = useCallback(
+    (requiredAuthority: UserAuthority | undefined) => {
+      console.log('derp');
+      if (!requiredAuthority) {
+        return true;
+      }
+      if (!user) {
+        return false;
+      }
+      return user.authorities.includes(requiredAuthority);
+    },
+    [user]
+  );
+
   const contextData = useMemo(
     () => ({
       isAuthenticated: !!user,
+      hasAuthority,
       user,
       login,
       loading,
@@ -129,6 +150,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }),
     [
       accessToken,
+      hasAuthority,
       loading,
       login,
       loginError,

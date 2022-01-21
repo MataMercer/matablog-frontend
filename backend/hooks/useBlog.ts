@@ -5,11 +5,14 @@ import { getBlogByIdRequest } from '../repositories/BlogRepository';
 
 type UseBlogProps = {
   blogId: string;
+  enabled?: boolean;
 };
 
-function useBlog({ blogId }: UseBlogProps) {
-  return useQuery<IBlog, ApiError>(['blog', blogId], () =>
-    getBlogByIdRequest(blogId)
+function useBlog({ blogId, enabled }: UseBlogProps) {
+  return useQuery<IBlog, ApiError>(
+    ['blog', blogId],
+    () => getBlogByIdRequest(blogId),
+    { enabled: enabled || true }
   );
 }
 

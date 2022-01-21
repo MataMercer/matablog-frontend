@@ -1,9 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useAuth } from '../auth/AuthContext';
 import styled from 'styled-components';
-import IUser from '../Types/IUser';
-import ThemeToggler from './ThemeToggler';
 import { faEllipsisH, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -15,6 +12,13 @@ import {
   Navbar,
 } from 'react-bootstrap';
 import React from 'react';
+import IUser from '../Types/IUser';
+import { useAuth } from '../auth/AuthContext';
+import ThemeToggler from './ThemeToggler';
+import useBlog from '../backend/hooks/useBlog';
+import IBlog from '../Types/IBlog';
+import ErrorAlert from './ErrorAlert';
+import ProtectComponent from '../auth/ProtectComponent';
 
 const Nav = styled.nav`
   font-family: Arial, sans-serif;
@@ -52,25 +56,30 @@ const H1 = styled.h1`
 `;
 
 interface AuthenticatedMenuProps {
-  user: IUser | null;
+  blogId: string;
 }
-const AuthenticatedMenu: React.FC<AuthenticatedMenuProps> = ({ user }) => {
+function AuthenticatedMenu({ blogId }: AuthenticatedMenuProps) {
   const { logout } = useAuth();
   const router = useRouter();
-
+  const { data: blog, status, error } = useBlog({ blogId });
+  if (!blog) {
+    return <ErrorAlert error={error} />;
+  }
   return (
     <>
-      <NavItem>
-        <Link href="/postformpage">
-          <Button>Create Post</Button>
-        </Link>
-      </NavItem>
+      <ProtectComponent requiredAuthority="POST_CREATE_NEW">
+        <NavItem>
+          <Link href="/postformpage">
+            <Button>Create Post</Button>
+          </Link>
+        </NavItem>
+      </ProtectComponent>
       <DropdownButton
         id="dropdown-basic-button"
-        title={`@${user?.activeBlog.blogName}`}
+        title={`@${blog.blogName}`}
         variant="link"
       >
-        <Link href={`/blog/${user?.activeBlog.blogName}`} passHref>
+        <Link href={`/blog/${blog.id}`} passHref>
           <Dropdown.Item>Profile</Dropdown.Item>
         </Link>
         <Dropdown.Item href="#/action-2">Settings</Dropdown.Item>
@@ -84,23 +93,24 @@ const AuthenticatedMenu: React.FC<AuthenticatedMenuProps> = ({ user }) => {
       </DropdownButton>
     </>
   );
-};
+}
 
-const UnauthenticatedMenu = () => {
+function UnauthenticatedMenu() {
   return (
-    <>
-      <li className="col-span-1">
-        <Link href="/login">
-          <Button>
-            <a>Login</a>
-          </Button>
-        </Link>
-      </li>
-    </>
+    <li className="col-span-1">
+      <Link href="/login">
+        <Button>
+          <a>Login</a>
+        </Button>
+      </Link>
+    </li>
   );
-};
+}
 
-const Search: React.FC<{ className?: string }> = ({ className }) => {
+type SearchProps = {
+  className?: string;
+};
+function Search({ className }: SearchProps) {
   return (
     <InputGroup className={className}>
       <DropdownButton
@@ -118,14 +128,14 @@ const Search: React.FC<{ className?: string }> = ({ className }) => {
       </Button>
     </InputGroup>
   );
-};
+}
 
 const StyledSearch = styled(Search)`
   width: 35em;
 `;
 
-export const NavBar: React.FC<{}> = ({}) => {
-  const { isAuthenticated, user } = useAuth();
+export default function NavBar({}) {
+  const { user } = useAuth();
   return (
     <header>
       <Nav>
@@ -140,8 +150,8 @@ export const NavBar: React.FC<{}> = ({}) => {
           <NavItem>
             <ThemeToggler />
           </NavItem>
-          {isAuthenticated ? (
-            <AuthenticatedMenu user={user} />
+          {user?.activeBlog.id ? (
+            <AuthenticatedMenu blogId={user.activeBlog.id} />
           ) : (
             <UnauthenticatedMenu />
           )}
@@ -149,4 +159,4 @@ export const NavBar: React.FC<{}> = ({}) => {
       </Nav>
     </header>
   );
-};
+}

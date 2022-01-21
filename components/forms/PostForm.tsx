@@ -3,6 +3,7 @@ import { Button, Form, Spinner } from 'react-bootstrap';
 import Router from 'next/router';
 import { WithContext as ReactTags, Tag } from 'react-tag-input';
 import { useForm, Controller } from 'react-hook-form';
+import { useMutation } from 'react-query';
 import MarkdownEditorInput from '../inputs/MarkdownEditorInput';
 import UploadInput, { FileInput } from '../inputs/UploadInput';
 import ErrorAlert from '../ErrorAlert';
@@ -29,30 +30,35 @@ export default function PostForm({ postId }: PostFormProps) {
     criteriaMode: 'all',
   });
   const {
-    post: fetchedPost,
-    errors: postErrors,
-    status: postStatus,
+    data: fetchedPost,
+    error: fetchedPostError,
+    status: fetchedPostStatus,
   } = usePost({
-    initialLoad: !!postId,
     postId,
+    enabled: !!postId,
   });
-
   // const {
   //   tags: tagSuggestions,
   //   errors: tagSuggestionsErrors,
   //   status: tagSuggestionsStatus,
   // } = useTags({ initialLoad: true });
-
-  const disabled = postStatus === 'loading';
   // tagSuggestionsStatus === 'loading';
-  const loading = postStatus === 'loading';
+  const createPostMutation = useMutation<IPost, ApiError, any, IPostRequest>(
+    (data: IPostRequest) => createPostRequest(data),
+    {
+      onSuccess: () => {
+        Router.push('/');
+      },
+    }
+  );
+  const loading =
+    fetchedPostStatus === 'loading' || createPostMutation.status === 'loading';
 
-  const [createPostStatus, setCreatePostStatus] =
-    useState<RequestStatus>('idle');
-  const [createPostError, setCreatePostError] = useState<ApiError>();
+  const { error: createPostError } = createPostMutation;
 
   useEffect(() => {
-    if (fetchedPost) {
+    if (fetchedPost && postId) {
+      console.log(fetchedPost);
       reset({
         postForm: fetchedPost,
         reactTags: Object.keys(fetchedPost.tags).map((tagName) => ({
@@ -82,24 +88,14 @@ export default function PostForm({ postId }: PostFormProps) {
         //   ...data.postForm,
         //   pictureUrls: [...fileUrlsToKeep, ...successUploadedPictureUrls],
         // });
-      } else {
       }
       data.postForm.published = true;
-      createPostRequest({
+      createPostMutation.mutate({
         ...data.postForm,
         tags: convertReactTagsToITags(),
         files: filesToUpload,
         published: true,
-      })
-        .then(() => {
-          setCreatePostStatus('succeeded');
-          setCreatePostError(undefined);
-          Router.push('/');
-        })
-        .catch((ex) => {
-          setCreatePostStatus('error');
-          setCreatePostError(ex);
-        });
+      });
     };
     submit();
   };
@@ -111,7 +107,7 @@ export default function PostForm({ postId }: PostFormProps) {
   const delimiters = [KeyCodes.comma, KeyCodes.enter];
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
-      <ErrorAlert errors={[...postErrors]} />
+      <ErrorAlert error={createPostError} />
       <Form.Group>
         <Form.Label>Title</Form.Label>
         <Controller
@@ -210,10 +206,10 @@ export default function PostForm({ postId }: PostFormProps) {
         />
       </Form.Group>
 
-      <Button color="primary" type="submit" disabled={disabled}>
+      <Button color="primary" type="submit" disabled={loading}>
         Save Draft
       </Button>
-      <Button color="primary" type="submit" disabled={disabled}>
+      <Button color="primary" type="submit" disabled={loading}>
         Create
       </Button>
       {loading ? <Spinner animation="border" /> : null}

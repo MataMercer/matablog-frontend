@@ -11,7 +11,7 @@ type UsePostsProps = {
 };
 
 function usePosts({ postSearchForm }: UsePostsProps) {
-  return useQuery<IPage<IPost>, ApiError>('posts', () =>
+  return useQuery<IPage<IPost>, ApiError>(['posts', postSearchForm], () =>
     getPostsRequest({
       page: postSearchForm.page,
       category: postSearchForm.category,

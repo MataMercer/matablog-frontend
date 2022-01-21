@@ -12,25 +12,21 @@ type LikeButtonProps = {
   postId: string;
   liked: boolean;
   likeCount: number;
+  onSuccess: () => void;
 };
 
-function LikeButton({ postId, liked, likeCount }: LikeButtonProps) {
-  const queryClient = useQueryClient();
+function LikeButton({ postId, liked, likeCount, onSuccess }: LikeButtonProps) {
   const likePostMutation = useMutation<undefined, ApiError>(
     () => likePostRequest(postId, !liked),
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['post', postId]);
-      },
+      onSuccess,
     }
   );
   return (
     <>
       <ProtectComponent>
         <div>
-          <ErrorAlert
-            errors={likePostMutation.error ? [likePostMutation.error] : []}
-          />
+          <ErrorAlert error={likePostMutation.error} />
           <Button
             onClick={() => {
               likePostMutation.mutate();

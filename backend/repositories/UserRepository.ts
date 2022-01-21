@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import { AxiosInstance } from 'axios';
 import { IAuthTokens } from '../../Types/IAuthTokens';
 import { ILoginRequest } from '../../Types/requestTypes/ILoginRequest';
@@ -21,29 +22,5 @@ export async function loginRequest({ username, password }: ILoginRequest) {
       refreshToken: response.headers.refreshtoken,
     };
     return authTokenRes;
-  });
-}
-
-export async function getCurrentUserRequest() {
-  return api({
-    method: 'get',
-    url: '/user/currentuser',
-  }).then((response) => {
-    const userRes: IUser = {
-      id: response.data.id,
-      username: response.data.username,
-      activeBlog: response.data.activeBlog,
-    };
-    return userRes;
-  });
-}
-
-export async function refreshTokenRequest(
-  refreshTokenRequestData: IRefreshTokenRequest
-) {
-  return api({
-    method: 'POST',
-    url: '/auth/refreshtoken',
-    data: refreshTokenRequestData,
   });
 }

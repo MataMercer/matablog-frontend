@@ -10,7 +10,7 @@ export default function PaginationNav({
   page,
   totalPages,
 }: PaginationNavProps) {
-  let items = [];
+  const items = [];
 
   for (let number = 1; number <= totalPages; number++) {
     items.push(

@@ -13,6 +13,7 @@ import DateLabel from './DateLabel';
 import LikeButton from './LikeButton';
 import { useAuth } from '../auth/AuthContext';
 import usePost from '../backend/hooks/usePost';
+import PostOptions from './PostOptions';
 
 const ThumbnailImg = styled.img`
   object-fit: contain;
@@ -58,14 +59,25 @@ export default function PostThumbnail(post: IPost) {
         </Row>
         <Row>{createdAt && <DateLabel label="" date={createdAt} />}</Row>
         <Row>
-          <LikeButton
-            postId={id as string}
-            liked={!!likes?.find((l) => l.liker.id === user?.activeBlog.id)}
-            likeCount={likes?.length}
-            onSuccess={() => {
-              queryClient.invalidateQueries('posts');
-            }}
-          />
+          <Col>
+            <LikeButton
+              postId={id as string}
+              liked={!!likes?.find((l) => l.liker.id === user?.activeBlog.id)}
+              likeCount={likes?.length}
+              onSuccess={() => {
+                queryClient.invalidateQueries('posts');
+              }}
+            />
+          </Col>
+          <Col>
+            <PostOptions
+              blog={blog}
+              postId={id}
+              onSuccess={() => {
+                queryClient.invalidateQueries('posts');
+              }}
+            />
+          </Col>
         </Row>
       </div>
     </Container>

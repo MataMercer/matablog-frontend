@@ -12,16 +12,13 @@ import Router from 'next/router';
 import IUser from '../Types/IUser';
 import useAuthToken from '../backend/hooks/useAuthToken';
 import { RequestStatus } from '../Types/enums/RequestStatus';
-import {
-  getCurrentUserRequest,
-  loginRequest,
-} from '../backend/repositories/UserRepository';
+import { loginRequest } from '../backend/repositories/UserRepository';
 import { ILoginRequest } from '../Types/requestTypes/ILoginRequest';
 import { ApiError } from '../Types/IApiError';
 import { decodeJwt } from './JwtUtil';
-import useBlog from '../backend/hooks/useBlog';
 import UserRole, { UserRoleAuths } from '../Types/enums/UserRole';
 import UserAuthority from '../Types/enums/UserAuthority';
+import IBlog from '../Types/IBlog';
 
 type AuthContextProps = {
   login: (loginForm: ILoginRequest) => void;
@@ -29,12 +26,13 @@ type AuthContextProps = {
   loading: boolean;
   loginStatus: RequestStatus;
   isAuthenticated: boolean;
-  user: IUser | null;
+  user?: IUser;
   loginError?: ApiError;
   accessToken: string;
   refreshToken: string;
   setAccessToken: (arg0: string) => void;
   hasAuthority: (arg0?: UserAuthority) => boolean;
+  hasOwnership: (arg0?: IBlog) => boolean;
 };
 
 const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
@@ -44,7 +42,7 @@ type AuthProviderProps = {
 };
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<IUser | null>(null);
+  const [user, setUser] = useState<IUser>();
   const { accessToken, refreshToken, setAccessToken, setRefreshToken } =
     useAuthToken();
 
@@ -83,7 +81,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (accessToken) {
       loadUser();
     } else {
-      setUser(null);
+      setUser(undefined);
     }
   }, [accessToken]);
 
@@ -116,7 +114,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const logout = useCallback(() => {
     setAccessToken('');
     setRefreshToken('');
-    setUser(null);
+    setUser(undefined);
     redirectAfterLogout();
   }, [setAccessToken, setRefreshToken]);
 
@@ -134,6 +132,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
     [user]
   );
 
+  const hasOwnership = useCallback(
+    (blog: IBlog | undefined) => {
+      if (!blog) {
+        return true;
+      }
+      if (!user) {
+        return false;
+      }
+
+      return user.activeBlog.id === blog.id;
+    },
+    [user]
+  );
+
   const contextData = useMemo(
     () => ({
       isAuthenticated: !!user,
@@ -147,6 +159,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       accessToken: accessToken || '',
       refreshToken: refreshToken || '',
       setAccessToken,
+      hasOwnership,
     }),
     [
       accessToken,
@@ -159,6 +172,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       refreshToken,
       setAccessToken,
       user,
+      hasOwnership,
     ]
   );
 

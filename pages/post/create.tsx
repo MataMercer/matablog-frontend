@@ -1,6 +1,6 @@
-import ProtectRoute from '../auth/ProtectRoute';
-import PostForm from '../components/forms/PostForm';
-import Layout from '../components/Layout';
+import ProtectRoute from '../../auth/ProtectRoute';
+import PostForm from '../../components/forms/PostForm';
+import Layout from '../../components/Layout';
 
 function PostFormPage() {
   return (

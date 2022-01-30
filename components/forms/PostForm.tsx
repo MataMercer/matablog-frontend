@@ -61,7 +61,7 @@ export default function PostForm({ postId }: PostFormProps) {
       console.log(fetchedPost);
       reset({
         postForm: fetchedPost,
-        reactTags: Object.keys(fetchedPost.tags).map((tagName) => ({
+        reactTags: Object.keys(fetchedPost.postTags).map((tagName) => ({
           id: tagName,
           text: tagName,
         })),

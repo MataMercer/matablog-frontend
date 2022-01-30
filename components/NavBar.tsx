@@ -69,7 +69,7 @@ function AuthenticatedMenu({ blogId }: AuthenticatedMenuProps) {
     <>
       <ProtectComponent requiredAuthority="POST_CREATE_NEW">
         <NavItem>
-          <Link href="/postformpage">
+          <Link href="/post/create">
             <Button>Create Post</Button>
           </Link>
         </NavItem>

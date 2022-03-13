@@ -7,6 +7,7 @@ import { likePostRequest } from '../backend/repositories/PostRepository';
 import ProtectComponent from '../auth/ProtectComponent';
 import ErrorAlert from './ErrorAlert';
 import { ApiError } from '../Types/IApiError';
+import { useAxios } from '../auth/AxiosProvider';
 
 type LikeButtonProps = {
   postId: string;
@@ -16,8 +17,9 @@ type LikeButtonProps = {
 };
 
 function LikeButton({ postId, liked, likeCount, onSuccess }: LikeButtonProps) {
+  const axios = useAxios();
   const likePostMutation = useMutation<undefined, ApiError>(
-    () => likePostRequest(postId, !liked),
+    () => likePostRequest(axios, postId, !liked),
     {
       onSuccess,
     }

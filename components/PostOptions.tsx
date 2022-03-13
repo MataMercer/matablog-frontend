@@ -7,6 +7,7 @@ import IBlog from '../Types/IBlog';
 import { useMutation } from 'react-query';
 import { deletePostRequest } from '../backend/repositories/PostRepository';
 import { ApiError } from '../Types/IApiError';
+import { useAxios } from '../auth/AxiosProvider';
 
 type PostOptionsProps = {
   blog: IBlog;
@@ -18,8 +19,9 @@ export default function PostOptions({
   postId,
   onSuccess,
 }: PostOptionsProps) {
+  const axios = useAxios();
   const deletePostMutation = useMutation<undefined, ApiError>(
-    () => deletePostRequest(postId),
+    () => deletePostRequest(axios, postId),
     { onSuccess }
   );
   return (

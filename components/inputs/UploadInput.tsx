@@ -3,6 +3,9 @@
 import { MouseEvent, useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Button } from 'react-bootstrap';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { DraggableContainer } from '../drag/DraggableContainer';
 
 export type FileInput = {
   data?: File;
@@ -12,10 +15,23 @@ export type FileInput = {
 type UploadInputProps = {
   id: string;
   fileInputs: FileInput[];
-  setFileInputs: (pictures: FileInput[]) => void;
+  setFileInputs: (arg0: FileInput[]) => void;
 };
 
-const UploadInput = ({ id, fileInputs, setFileInputs }: UploadInputProps) => {
+type UploadThumbProps = {
+  url?: string;
+  index: number;
+};
+function UploadThumb({ data, url }: FileInput) {
+  return (
+    <div>
+      {' '}
+      <img width="50px" src={url} alt="uploaded" />
+    </div>
+  );
+}
+
+function UploadInput({ id, fileInputs, setFileInputs }: UploadInputProps) {
   const [fileInputsState, setFileInputsState] = useState<FileInput[]>([]);
 
   useEffect(() => {
@@ -70,25 +86,15 @@ const UploadInput = ({ id, fileInputs, setFileInputs }: UploadInputProps) => {
 
         <p>[Drag and drop some files here, or click to select files]</p>
       </div>
-      <ul>
-        {fileInputsState
-          ? fileInputsState.map((pictureSrc, index) => (
-              <li key={pictureSrc.url}>
-                <img width="50px" src={pictureSrc.url} alt="uploaded" />
-                <Button
-                  color="danger"
-                  size="sm"
-                  onClick={handleDeleteClick}
-                  value={index}
-                >
-                  X
-                </Button>
-              </li>
-            ))
-          : null}
-      </ul>
+      <DndProvider backend={HTML5Backend}>
+        <DraggableContainer<FileInput>
+          list={fileInputs}
+          setList={setFileInputs}
+          cardComponent={UploadThumb}
+        />
+      </DndProvider>
     </>
   );
-};
+}
 
 export default UploadInput;

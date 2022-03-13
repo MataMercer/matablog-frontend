@@ -3,11 +3,9 @@ import { IPostRequest } from '../../Types/requestTypes/IPostRequest';
 import { IPostSearchForm } from '../../Types/requestTypes/IPostSearchRequest';
 import IPost from '../../Types/IPost';
 import { IPage } from '../../Types/IPage';
-import IFile from '../../Types/IFile';
-import api from '../config/AxiosApiInstance';
 
-async function getPostRequest(postId: string) {
-  const response = await api({
+async function getPostRequest(axios: AxiosInstance, postId: string) {
+  const response = await axios({
     method: 'get',
     url: `/post/${postId}`,
   });
@@ -16,8 +14,11 @@ async function getPostRequest(postId: string) {
   } as IPost;
 }
 
-async function getPostsRequest(postSearchForm: IPostSearchForm) {
-  const response = await api({
+async function getPostsRequest(
+  axios: AxiosInstance,
+  postSearchForm: IPostSearchForm
+) {
+  const response = await axios({
     method: 'get',
     url: '/post/',
     params: postSearchForm,
@@ -27,7 +28,10 @@ async function getPostsRequest(postSearchForm: IPostSearchForm) {
   } as IPage<IPost>;
 }
 
-const createPostRequest = async (postData: IPostRequest) => {
+const createPostRequest = async (
+  axios: AxiosInstance,
+  postData: IPostRequest
+) => {
   const convertJsonListToFormDataList = (input: string[]) => {
     return JSON.stringify(input)
       .replaceAll('"', '')
@@ -38,7 +42,7 @@ const createPostRequest = async (postData: IPostRequest) => {
   formData.append('title', postData.title);
   formData.append(
     'postTags',
-    convertJsonListToFormDataList(postData.tags.map((tag) => tag.name))
+    convertJsonListToFormDataList(postData.postTags.map((tag) => tag.name))
   );
   formData.append('content', postData.content);
   formData.append(
@@ -47,11 +51,11 @@ const createPostRequest = async (postData: IPostRequest) => {
   );
   formData.append('sensitive', JSON.stringify(postData.sensitive));
   formData.append('published', JSON.stringify(postData.published));
-  postData.files.forEach((file) => {
+  postData.files.reverse().forEach((file) => {
     formData.append('files', file);
   });
 
-  const response = await api({
+  const response = await axios({
     method: 'post',
     url: '/post/create',
     headers: {
@@ -62,10 +66,53 @@ const createPostRequest = async (postData: IPostRequest) => {
   return response.data as IPost;
 };
 
-const updatePostRequest = async (postData: IPost) => {};
+const updatePostRequest = async (
+  axios: AxiosInstance,
+  postData: IPostRequest
+) => {
+  const convertJsonListToFormDataList = (input: string[]) => {
+    return JSON.stringify(input)
+      .replaceAll('"', '')
+      .replaceAll('[', '')
+      .replaceAll(']', '');
+  };
+  const formData = new FormData();
+  formData.append('id', postData.id);
+  formData.append('title', postData.title);
+  formData.append(
+    'postTags',
+    convertJsonListToFormDataList(postData.postTags.map((tag) => tag.name))
+  );
+  formData.append('content', postData.content);
+  formData.append(
+    'communityTaggingEnabled',
+    JSON.stringify(postData.communityTaggingEnabled)
+  );
+  formData.append('sensitive', JSON.stringify(postData.sensitive));
+  formData.append('published', JSON.stringify(postData.published));
+  formData.append(
+    'attachments',
+    convertJsonListToFormDataList(
+      postData.attachments?.map((it) => it.id) || []
+    )
+  );
+  postData.files.reverse().forEach((file) => {
+    formData.append('files', file);
+  });
 
-const deletePostRequest = async (id: string) => {
-  const response = await api({
+  const response = await axios({
+    method: 'put',
+    url: '/post/update',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    data: formData,
+  });
+  return response.data as IPost;
+};
+
+const deletePostRequest = async (axios: AxiosInstance, id: string) => {
+  const response = await axios({
     method: 'delete',
     url: `/post/${id}`,
   });
@@ -74,8 +121,12 @@ const deletePostRequest = async (id: string) => {
   };
 };
 
-const likePostRequest = async (id: string, isLike: boolean) => {
-  const response = await api({
+const likePostRequest = async (
+  axios: AxiosInstance,
+  id: string,
+  isLike: boolean
+) => {
+  const response = await axios({
     method: isLike ? 'post' : 'delete',
     url: `/post/${id}/like`,
   });

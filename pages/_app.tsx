@@ -6,19 +6,22 @@ import { AuthProvider } from '../auth/AuthContext';
 import MainTheme from '../themes/MainTheme';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { SSRProvider } from 'react-bootstrap';
+import AxiosProvider from '../auth/AxiosProvider';
 
 const queryClient = new QueryClient();
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <SSRProvider>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={MainTheme}>
-          <AuthProvider>
-            <Component {...pageProps} />
-          </AuthProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
+      <AuthProvider>
+        <AxiosProvider>
+          <QueryClientProvider client={queryClient}>
+            <ThemeProvider theme={MainTheme}>
+              <Component {...pageProps} />
+            </ThemeProvider>
+          </QueryClientProvider>
+        </AxiosProvider>
+      </AuthProvider>
     </SSRProvider>
   );
 }

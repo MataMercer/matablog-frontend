@@ -4,15 +4,17 @@ import { IAuthTokens } from '../../Types/IAuthTokens';
 import { ILoginRequest } from '../../Types/requestTypes/ILoginRequest';
 import IUser from '../../Types/IUser';
 import { IRefreshTokenRequest } from '../../Types/requestTypes/IRefreshTokenRequest';
-import api from '../config/AxiosApiInstance';
 
-export async function loginRequest({ username, password }: ILoginRequest) {
+export async function loginRequest(
+  axios: AxiosInstance,
+  { username, password }: ILoginRequest
+) {
   const data = {
     username,
     password,
   };
 
-  return api({
+  return axios({
     method: 'POST',
     url: '/auth/login',
     data,

@@ -19,6 +19,7 @@ import { decodeJwt } from './JwtUtil';
 import UserRole, { UserRoleAuths } from '../Types/enums/UserRole';
 import UserAuthority from '../Types/enums/UserAuthority';
 import IBlog from '../Types/IBlog';
+import AxiosUnauthInstance from '../backend/config/AxiosUnauthInstance';
 
 type AuthContextProps = {
   login: (loginForm: ILoginRequest) => void;
@@ -78,6 +79,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       //     setCurrentUserError(ex);
       //   });
     }
+
     if (accessToken) {
       loadUser();
     } else {
@@ -95,7 +97,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const login = useCallback(
     (loginForm: ILoginRequest) => {
-      loginRequest(loginForm)
+      loginRequest(AxiosUnauthInstance, loginForm)
         .then((res: any) => {
           setAccessToken(res.accessToken);
           setRefreshToken(res.refreshToken);

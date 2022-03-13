@@ -10,10 +10,18 @@ import ErrorAlert from '../ErrorAlert';
 import { IPostRequest } from '../../Types/requestTypes/IPostRequest';
 import usePost from '../../backend/hooks/usePost';
 import IPost from '../../Types/IPost';
-import { createPostRequest } from '../../backend/repositories/PostRepository';
+import {
+  createPostRequest,
+  updatePostRequest,
+} from '../../backend/repositories/PostRepository';
 import IPostTag from '../../Types/IPostTag';
-import { RequestStatus } from '../../Types/enums/RequestStatus';
 import { ApiError } from '../../Types/IApiError';
+import { useAxios } from '../../auth/AxiosProvider';
+import IFile from '../../Types/IFile';
+import {
+  getFileUrl,
+  getFileUrls,
+} from '../../backend/repositories/FileRepository';
 
 type PostFormProps = {
   postId: string;
@@ -26,6 +34,7 @@ type PostFormData = {
 };
 
 export default function PostForm({ postId }: PostFormProps) {
+  const axios = useAxios();
   const { reset, setValue, control, handleSubmit } = useForm<PostFormData>({
     criteriaMode: 'all',
   });
@@ -44,61 +53,71 @@ export default function PostForm({ postId }: PostFormProps) {
   // } = useTags({ initialLoad: true });
   // tagSuggestionsStatus === 'loading';
   const createPostMutation = useMutation<IPost, ApiError, any, IPostRequest>(
-    (data: IPostRequest) => createPostRequest(data),
+    (data: IPostRequest) => createPostRequest(axios, data),
     {
       onSuccess: () => {
         Router.push('/');
       },
     }
   );
+
+  const updatePostMutation = useMutation<IPost, ApiError, any, IPostRequest>(
+    (data: IPostRequest) => updatePostRequest(axios, data),
+    {
+      onSuccess: () => {
+        Router.push('/');
+      },
+    }
+  );
+
   const loading =
     fetchedPostStatus === 'loading' || createPostMutation.status === 'loading';
 
   const { error: createPostError } = createPostMutation;
 
   useEffect(() => {
+    console.log('erp');
     if (fetchedPost && postId) {
-      console.log(fetchedPost);
       reset({
         postForm: fetchedPost,
-        reactTags: Object.keys(fetchedPost.postTags).map((tagName) => ({
-          id: tagName,
-          text: tagName,
+        reactTags: fetchedPost.postTags.map((postTag) => ({
+          id: postTag.id,
+          text: postTag.name,
+        })),
+        pictureFiles: fetchedPost.attachments?.map((it) => ({
+          url: getFileUrl(it),
         })),
       });
     }
   }, [postId, fetchedPost, reset]);
 
-  const onSubmit = (data: PostFormData) => {
+  const onSubmit = (published: boolean) => (data: PostFormData) => {
     const { pictureFiles } = data;
-
     const convertReactTagsToITags = () =>
       data.reactTags.map((reactTag) => ({ name: reactTag.id } as IPostTag));
-    const submit = async () => {
-      const filesToUpload = pictureFiles
-        .map((file) => file.data)
-        .filter((file) => file) as File[];
+    const filesToUpload = pictureFiles
+      .map((file) => file.data)
+      .filter((file) => file) as File[];
 
-      const fileUrlsToKeep = pictureFiles
-        .filter((file) => !file.data)
-        .map((file) => file.url);
-
-      if (postId && fetchedPost) {
-        // await updatePost({
-        //   ...data.postForm,
-        //   pictureUrls: [...fileUrlsToKeep, ...successUploadedPictureUrls],
-        // });
-      }
-      data.postForm.published = true;
+    if (postId) {
+      updatePostMutation.mutate({
+        ...data.postForm,
+        postTags: convertReactTagsToITags(),
+        files: filesToUpload,
+        published,
+      });
+    } else {
       createPostMutation.mutate({
         ...data.postForm,
-        tags: convertReactTagsToITags(),
+        postTags: convertReactTagsToITags(),
         files: filesToUpload,
-        published: true,
+        published,
       });
-    };
-    submit();
+    }
   };
+
+  const onSubmitPublish = onSubmit(true);
+  const onSubmitDraft = onSubmit(false);
 
   const KeyCodes = {
     comma: 188,
@@ -106,7 +125,7 @@ export default function PostForm({ postId }: PostFormProps) {
   };
   const delimiters = [KeyCodes.comma, KeyCodes.enter];
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
+    <Form onSubmit={handleSubmit(onSubmitPublish)}>
       <ErrorAlert error={createPostError} />
       <Form.Group>
         <Form.Label>Title</Form.Label>
@@ -121,7 +140,7 @@ export default function PostForm({ postId }: PostFormProps) {
       <Controller
         name="postForm.content"
         control={control}
-        defaultValue={fetchedPost?.content}
+        defaultValue={fetchedPost?.content || ''}
         render={({ field }) => (
           <MarkdownEditorInput
             name="content"
@@ -206,11 +225,15 @@ export default function PostForm({ postId }: PostFormProps) {
         />
       </Form.Group>
 
-      <Button color="primary" type="submit" disabled={loading}>
+      <Button
+        color="primary"
+        onClick={handleSubmit(onSubmitDraft)}
+        disabled={loading}
+      >
         Save Draft
       </Button>
-      <Button color="primary" type="submit" disabled={loading}>
-        Create
+      <Button color="primary" type="submit" value="publish" disabled={loading}>
+        Publish
       </Button>
       {loading ? <Spinner animation="border" /> : null}
     </Form>

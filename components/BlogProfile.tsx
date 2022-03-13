@@ -29,7 +29,7 @@ export default function BlogProfile({
   }, [status]);
   return (
     <>
-      <ErrorAlert errors={[]} />
+      <ErrorAlert error={error} />
       <CenterSpinner status={status} />
       {blog && (
         <>

@@ -7,3 +7,6 @@ export function getFileUrls(files: IFile[]) {
     (f) => `${axiosApiConfig.baseURL}files/serve/${f.id}/${f.name}`
   );
 }
+export function getFileUrl(file: IFile) {
+  return `${axiosApiConfig.baseURL}files/serve/${file.id}/${file.name}`;
+}

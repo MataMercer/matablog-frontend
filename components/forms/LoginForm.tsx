@@ -17,7 +17,7 @@ export default function LoginForm() {
 
   return (
     <Form onSubmit={onSubmit}>
-      <ErrorAlert errors={loginError ? [loginError] : []} />
+      <ErrorAlert error={loginError} />
       <Form.Group>
         <Form.Label>Username</Form.Label>
         <Form.Control

@@ -86,6 +86,7 @@ export default function PostForm({ postId }: PostFormProps) {
         })),
         pictureFiles: fetchedPost.attachments?.map((it) => ({
           url: getFileUrl(it),
+          id: it.id,
         })),
       });
     }
@@ -96,15 +97,23 @@ export default function PostForm({ postId }: PostFormProps) {
     const convertReactTagsToITags = () =>
       data.reactTags.map((reactTag) => ({ name: reactTag.id } as IPostTag));
     const filesToUpload = pictureFiles
-      .map((file) => file.data)
-      .filter((file) => file) as File[];
+      .filter((it) => it.data)
+      .map((it) => it.data);
 
+    const attachments = pictureFiles.filter((it) => it.id);
+    const attachmentInsertions = pictureFiles
+      .reverse()
+      .flatMap((it, index) => (it.data ? index : []));
+    console.log(attachmentInsertions);
+    console.log(pictureFiles);
     if (postId) {
       updatePostMutation.mutate({
         ...data.postForm,
         postTags: convertReactTagsToITags(),
         files: filesToUpload,
+        attachments,
         published,
+        attachmentInsertions,
       });
     } else {
       createPostMutation.mutate({

@@ -93,7 +93,13 @@ const updatePostRequest = async (
   formData.append(
     'attachments',
     convertJsonListToFormDataList(
-      postData.attachments?.map((it) => it.id) || []
+      postData.attachments?.reverse().map((it) => it.id) || []
+    )
+  );
+  formData.append(
+    'attachmentInsertions',
+    convertJsonListToFormDataList(
+      postData.attachmentInsertions.map((it) => it.toString())
     )
   );
   postData.files.reverse().forEach((file) => {

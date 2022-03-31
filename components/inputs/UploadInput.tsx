@@ -10,6 +10,7 @@ import { DraggableContainer } from '../drag/DraggableContainer';
 export type FileInput = {
   data?: File;
   url?: string;
+  id?: string;
 };
 
 type UploadInputProps = {
@@ -22,6 +23,7 @@ type UploadThumbProps = {
   url?: string;
   index: number;
 };
+
 function UploadThumb({ data, url }: FileInput) {
   return (
     <div>

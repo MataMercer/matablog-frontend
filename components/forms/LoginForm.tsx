@@ -5,6 +5,8 @@ import { Button, Form } from 'react-bootstrap';
 import { useAuth } from '../../auth/AuthContext';
 import ErrorAlert from '../ErrorAlert';
 import { ILoginRequest } from '../../Types/requestTypes/ILoginRequest';
+import Link from 'next/link';
+import { url } from 'inspector';
 
 export default function LoginForm() {
   const { login, loginError } = useAuth();
@@ -34,6 +36,14 @@ export default function LoginForm() {
       <Button color="primary" type="submit">
         Login
       </Button>
+
+      <Link
+        href={{
+          pathname: 'http://localhost:8080/api/v1/oauth/github/login',
+        }}
+      >
+        <Button>Github Login</Button>
+      </Link>
     </Form>
   );
 }

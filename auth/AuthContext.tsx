@@ -20,9 +20,11 @@ import UserRole, { UserRoleAuths } from '../Types/enums/UserRole';
 import UserAuthority from '../Types/enums/UserAuthority';
 import IBlog from '../Types/IBlog';
 import AxiosUnauthInstance from '../backend/config/AxiosUnauthInstance';
+import { getOAuthCodeExchangeRequest } from '../backend/repositories/OAuthRepository';
 
 type AuthContextProps = {
   login: (loginForm: ILoginRequest) => void;
+  oauthLogin: (code: String) => void;
   logout: () => void;
   loading: boolean;
   loginStatus: RequestStatus;
@@ -113,6 +115,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
     [setAccessToken, setRefreshToken]
   );
 
+  const oauthLogin = useCallback(
+    (code: String) => {
+      getOAuthCodeExchangeRequest(AxiosUnauthInstance, code)
+        .then((res: any) => {
+          setAccessToken(res.accessToken);
+          setRefreshToken(res.refreshToken);
+          setLoginError(undefined);
+          setLoginStatus('succeeded');
+          redirectAfterLogin();
+        })
+        .catch((ex: ApiError) => {
+          setLoginError(ex);
+          setLoginStatus('error');
+        });
+    },
+    [setAccessToken, setRefreshToken]
+  );
+
   const logout = useCallback(() => {
     setAccessToken('');
     setRefreshToken('');
@@ -154,6 +174,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       hasAuthority,
       user,
       login,
+      oauthLogin,
       loading,
       logout,
       loginError,
@@ -168,6 +189,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       hasAuthority,
       loading,
       login,
+      oauthLogin,
       loginError,
       loginStatus,
       logout,

@@ -6,7 +6,7 @@ import AxiosUnauthInstance from '../backend/config/AxiosUnauthInstance';
 import { IRefreshTokenRequest } from '../Types/requestTypes/IRefreshTokenRequest';
 import { useAuth } from './AuthContext';
 
-export const AxiosContext = createContext<AxiosInstance>(undefined);
+export const AxiosContext = createContext<AxiosInstance | undefined>(undefined);
 
 async function refreshTokenRequest(
   refreshTokenRequestData: IRefreshTokenRequest

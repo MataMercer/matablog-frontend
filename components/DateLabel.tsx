@@ -5,5 +5,5 @@ type DateLabelProps = {
 };
 
 export default function DateLabel({ label, date }: DateLabelProps) {
-  return <>{`${label}${new Date(date).toLocaleString()}`}</>;
+  return <div>{`${label}${new Date(date).toDateString()}`}</div>;
 }

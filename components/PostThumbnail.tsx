@@ -6,7 +6,6 @@ import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { useQueryClient } from 'react-query';
-import CompletionStatusBadge from './CompletionStatusBadge';
 import IPost from '../Types/IPost';
 import { getFileUrls } from '../backend/repositories/FileRepository';
 import DateLabel from './DateLabel';
@@ -14,6 +13,7 @@ import LikeButton from './LikeButton';
 import { useAuth } from '../auth/AuthContext';
 import usePost from '../backend/hooks/usePost';
 import PostOptions from './PostOptions';
+import PostMenu from './PostMenu';
 
 const ThumbnailImg = styled.img`
   object-fit: contain;
@@ -21,15 +21,18 @@ const ThumbnailImg = styled.img`
   width: 100%;
 `;
 
-export default function PostThumbnail(post: IPost) {
-  const { user } = useAuth();
+const SPostThumbnailContainer = styled.div`
+  border: 1px solid lightgray;
+  padding: 20px;
+`;
 
+export default function PostThumbnail(post: IPost) {
   const queryClient = useQueryClient();
   const { id, title, attachments, postTags, blog, createdAt, likes } = post;
   const pictureUrls = attachments ? getFileUrls(attachments) : [];
 
   return (
-    <Container className="project-entry" color="primary">
+    <SPostThumbnailContainer>
       <Row>
         <Link scroll={false} href={`/post/${id}`} passHref>
           <a>
@@ -52,34 +55,19 @@ export default function PostThumbnail(post: IPost) {
         </Row>
         <Row>
           <Link href={`/blog/${blog.id}`} passHref>
-            <a>
-              <h3>{`@${blog.blogName}`}</h3>
-            </a>
+            <a>{`@${blog.blogName}`}</a>
           </Link>
         </Row>
         <Row>{createdAt && <DateLabel label="" date={createdAt} />}</Row>
         <Row>
-          <Col>
-            <LikeButton
-              postId={id as string}
-              liked={!!likes?.find((l) => l.liker.id === user?.activeBlog.id)}
-              likeCount={likes?.length}
-              onSuccess={() => {
-                queryClient.invalidateQueries('posts');
-              }}
-            />
-          </Col>
-          <Col>
-            <PostOptions
-              blog={blog}
-              postId={id}
-              onSuccess={() => {
-                queryClient.invalidateQueries('posts');
-              }}
-            />
-          </Col>
+          <PostMenu
+            post={post}
+            onSuccess={() => {
+              queryClient.invalidateQueries('posts');
+            }}
+          />
         </Row>
       </div>
-    </Container>
+    </SPostThumbnailContainer>
   );
 }

@@ -3,9 +3,9 @@ import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import styled from 'styled-components';
 
 const FooterCust = styled.footer`
-  color: white;
-  background-color: ${({ theme }) => theme.colors.primary};
-  box-shadow: 0 100vh 0 100vh ${({ theme }) => theme.colors.primary};
+  color: black;
+  background-color: #dadada;
+  box-shadow: 0 100vh 0 100vh #dadada;
   padding: 2em;
   justify-content: center;
 `;
@@ -18,7 +18,7 @@ const LinkList = styled.ul`
 `;
 
 const StyledAnchor = styled.a`
-  color: white;
+  color: black;
 `;
 
 const CopyrightText = styled.p`

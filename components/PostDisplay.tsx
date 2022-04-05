@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import { useRouter } from 'next/router';
 import Skeleton from 'react-loading-skeleton';
 import { Badge, Row, Col, Container } from 'react-bootstrap';
-import { UseQueryResult } from 'react-query';
+import { useQueryClient, UseQueryResult } from 'react-query';
 import { ApiError } from 'next/dist/server/api-utils';
 import ThumbnailCarousel from './ThumbnailCarousel';
 import ErrorAlert from './ErrorAlert';
@@ -12,6 +12,7 @@ import usePost from '../backend/hooks/usePost';
 import { getFileUrls } from '../backend/repositories/FileRepository';
 import DateLabel from './DateLabel';
 import IPost from '../Types/IPost';
+import PostMenu from './PostMenu';
 type PostDisplayProps = {
   postId: string;
   setPageTitle?: (pageTitle: string) => void;
@@ -86,10 +87,10 @@ function Text({ queryResult }: TextProps) {
         {post.createdAt && post.updatedAt && (
           <>
             <Row>
-              <DateLabel label="Created At: " date={post.createdAt} />
+              <DateLabel label="Created: " date={post.createdAt} />
             </Row>
             <Row>
-              <DateLabel label="Updated At: " date={post.updatedAt} />
+              <DateLabel label="Updated: " date={post.updatedAt} />
             </Row>
           </>
         )}
@@ -105,6 +106,7 @@ export default function PostDisplay({
   const useQueryResult = usePost({ postId });
   const { data: post, status, error } = useQueryResult;
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (setPageTitle && post) {
@@ -128,6 +130,14 @@ export default function PostDisplay({
           <Text queryResult={useQueryResult} />
         </Container>
       </Row>
+      {post && (
+        <PostMenu
+          post={post}
+          onSuccess={() => {
+            queryClient.invalidateQueries(['post', post.id]);
+          }}
+        />
+      )}
     </>
   );
 }

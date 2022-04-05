@@ -7,6 +7,9 @@ import ErrorAlert from '../ErrorAlert';
 import { ILoginRequest } from '../../Types/requestTypes/ILoginRequest';
 import Link from 'next/link';
 import { url } from 'inspector';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGithub } from '@fortawesome/free-brands-svg-icons';
+import { SButton } from '../styles/Button.styled';
 
 export default function LoginForm() {
   const { login, loginError } = useAuth();
@@ -33,16 +36,16 @@ export default function LoginForm() {
           {...register('password', { required: 'You must enter a password.' })}
         />
       </Form.Group>
-      <Button color="primary" type="submit">
-        Login
-      </Button>
+      <SButton type="submit">Login</SButton>
 
       <Link
         href={{
           pathname: 'http://localhost:8080/api/v1/oauth/github/login',
         }}
       >
-        <Button>Github Login</Button>
+        <SButton color="dark">
+          <FontAwesomeIcon icon={faGithub} /> Github Login
+        </SButton>
       </Link>
     </Form>
   );

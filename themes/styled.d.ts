@@ -7,11 +7,12 @@ declare module 'styled-components' {
     | 'success'
     | 'warning'
     | 'danger'
-    | 'info';
+    | 'info'
+    | 'dark'
+    | 'light';
 
   export interface DefaultTheme {
     borderRadius: string;
-
     colors: { [key in TypeColors]: string };
   }
 }

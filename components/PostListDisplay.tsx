@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row } from 'react-bootstrap';
 import React from 'react';
+import styled from 'styled-components';
 import ErrorAlert from './ErrorAlert';
 import CenterSpinner from './CenterSpinner';
 import usePosts from '../backend/hooks/usePosts';
@@ -14,6 +15,12 @@ type PostListDisplayProps = {
   postSearchForm: IPostSearchForm;
 };
 
+const SPostListContainer = styled.div`
+  display: grid;
+  justify-items: stretch;
+  grid-template-columns: auto auto auto;
+`;
+
 export default function PostListDisplay({
   postSearchForm,
 }: PostListDisplayProps) {
@@ -26,7 +33,7 @@ export default function PostListDisplay({
   const {
     data: postsPage,
     status,
-    errors,
+    error,
   } = usePosts({
     postSearchForm: {
       ...postSearchForm,
@@ -41,43 +48,31 @@ export default function PostListDisplay({
   return (
     <Container>
       <Row>
-        <ErrorAlert {...{ errors }} />
+        <ErrorAlert {...{ error }} />
       </Row>
       <CenterSpinner {...{ status }} />
 
       {posts && !empty && totalPages ? (
         <>
-          {posts.map((postRow, index) => {
-            if (index % projectEntriesPerRow === 0) {
-              return (
-                // eslint-disable-next-line react/no-array-index-key
-                <Row key={index}>
-                  {posts
-                    .slice(index, index + projectEntriesPerRow)
-                    .map((post: IPost) => (
-                      <Col md="3" key={post.id}>
-                        <PostThumbnail
-                          key={post.id}
-                          id={post.id}
-                          title={post.title}
-                          content={post.content}
-                          tags={post.tags}
-                          attachments={post.attachments ? post.attachments : []}
-                          createdAt={post.createdAt}
-                          updatedAt={post.updatedAt}
-                          communityTaggingEnabled={post.communityTaggingEnabled}
-                          sensitive={post.sensitive}
-                          published={post.published}
-                          blog={post.blog}
-                          likes={post.likes}
-                        />
-                      </Col>
-                    ))}
-                </Row>
-              );
-            }
-            return null;
-          })}
+          <SPostListContainer>
+            {posts.map((post, index) => (
+              <PostThumbnail
+                key={post.id}
+                id={post.id}
+                title={post.title}
+                content={post.content}
+                postTags={post.postTags}
+                attachments={post.attachments ? post.attachments : []}
+                createdAt={post.createdAt}
+                updatedAt={post.updatedAt}
+                communityTaggingEnabled={post.communityTaggingEnabled}
+                sensitive={post.sensitive}
+                published={post.published}
+                blog={post.blog}
+                likes={post.likes}
+              />
+            ))}
+          </SPostListContainer>
 
           <PaginationNav page={page} totalPages={totalPages} />
         </>

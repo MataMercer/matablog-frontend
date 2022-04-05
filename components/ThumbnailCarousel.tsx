@@ -10,7 +10,12 @@ const PostPicture = styled.img`
   height: 50vh;
 `;
 
-const Nav = styled(Row)``;
+const Nav = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+`;
 
 const NavItemButton = styled.button`
   background-color: #1e1e24;
@@ -18,6 +23,14 @@ const NavItemButton = styled.button`
   padding: 0;
   border-radius: 0;
   font-size: large;
+`;
+
+const SDirectionButton = styled.button`
+  border: none;
+  background-color: ${({ theme }) => theme.colors.primary};
+  color: white;
+  font-size: xx-large;
+  padding: 20px 30px 20px;
 `;
 
 type NavItemImageProps = {
@@ -41,7 +54,7 @@ type ThumbnailCarouselProps = {
   pictureUrls: string[];
 };
 
-const ThumbnailCarousel = ({ pictureUrls }: ThumbnailCarouselProps) => {
+function ThumbnailCarousel({ pictureUrls }: ThumbnailCarouselProps) {
   const [index, setIndex] = useState<number>(0);
 
   const handleDirectionClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -75,20 +88,18 @@ const ThumbnailCarousel = ({ pictureUrls }: ThumbnailCarouselProps) => {
 
   return (
     <Container>
-      <Row>
-        {pictureUrls.map((pictureUrl, i) => (
-          <PostPicture
-            // eslint-disable-next-line react/no-array-index-key
-            key={i}
-            src={pictureUrl}
-            alt="Screenshot of app"
-            hidden={i !== index}
-          />
-        ))}
-      </Row>
+      {pictureUrls.map((pictureUrl, i) => (
+        <PostPicture
+          // eslint-disable-next-line react/no-array-index-key
+          key={i}
+          src={pictureUrl}
+          alt="Screenshot of app"
+          hidden={i !== index}
+        />
+      ))}
 
       <Nav>
-        <Button
+        <SDirectionButton
           value="left"
           disabled={index === 0}
           onClick={handleDirectionClick}
@@ -97,7 +108,7 @@ const ThumbnailCarousel = ({ pictureUrls }: ThumbnailCarouselProps) => {
             icon={faAngleLeft}
             style={{ pointerEvents: 'none' }}
           />
-        </Button>
+        </SDirectionButton>
         {pictureUrls.map((pictureUrl, i) => (
           <NavItemButton
             // eslint-disable-next-line react/no-array-index-key
@@ -114,7 +125,7 @@ const ThumbnailCarousel = ({ pictureUrls }: ThumbnailCarouselProps) => {
             />
           </NavItemButton>
         ))}
-        <Button
+        <SDirectionButton
           value="right"
           disabled={index === pictureUrls.length - 1}
           onClick={handleDirectionClick}
@@ -123,10 +134,10 @@ const ThumbnailCarousel = ({ pictureUrls }: ThumbnailCarouselProps) => {
             icon={faAngleRight}
             style={{ pointerEvents: 'none' }}
           />
-        </Button>
+        </SDirectionButton>
       </Nav>
     </Container>
   );
-};
+}
 
 export default ThumbnailCarousel;

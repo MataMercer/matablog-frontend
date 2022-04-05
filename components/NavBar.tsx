@@ -1,24 +1,26 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { faEllipsisH, faSearch } from '@fortawesome/free-solid-svg-icons';
+import {
+  faEllipsisH,
+  faSearch,
+  faPen,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   DropdownButton,
   Dropdown,
-  Button,
   InputGroup,
   FormControl,
-  Navbar,
 } from 'react-bootstrap';
 import React from 'react';
 import IUser from '../Types/IUser';
 import { useAuth } from '../auth/AuthContext';
-import ThemeToggler from './ThemeToggler';
 import useBlog from '../backend/hooks/useBlog';
 import IBlog from '../Types/IBlog';
 import ErrorAlert from './ErrorAlert';
 import ProtectComponent from '../auth/ProtectComponent';
+import { SButton } from './styles/Button.styled';
 
 const Nav = styled.nav`
   font-family: Arial, sans-serif;
@@ -30,15 +32,17 @@ const Nav = styled.nav`
   z-index: 999;
   position: relative;
   height: 3em;
+  background-color: ${({ theme }) => theme.colors.primary};
 `;
-const NavList = styled.ul`
+const NavList = styled.div`
   list-style: none;
   display: flex;
   justify-content: space-around;
   align-items: center;
 `;
-const NavItem = styled.li`
+const NavItem = styled.div`
   align-items: center;
+  margin: 0px 10px 0px;
 `;
 const Brand = styled.a`
   display: flex;
@@ -52,9 +56,13 @@ const H1 = styled.h1`
   font-size: 20px;
   line-height: 1;
   margin: 6px 0 6px 10px;
-  color: ${({ theme }) => theme.colors.primary};
+  color: white;
+  text-decoration: none;
 `;
 
+const IconText = styled.span`
+  margin-left: 10px;
+`;
 interface AuthenticatedMenuProps {
   blogId: string;
 }
@@ -70,15 +78,14 @@ function AuthenticatedMenu({ blogId }: AuthenticatedMenuProps) {
       <ProtectComponent requiredAuthority="POST_CREATE_NEW">
         <NavItem>
           <Link href="/post/create">
-            <Button>Create Post</Button>
+            <SButton color="light">
+              <FontAwesomeIcon icon={faPen} />
+              <IconText>Create Post</IconText>
+            </SButton>
           </Link>
         </NavItem>
       </ProtectComponent>
-      <DropdownButton
-        id="dropdown-basic-button"
-        title={`@${blog.blogName}`}
-        variant="link"
-      >
+      <DropdownButton id="dropdown-basic-button" title={`@${blog.blogName}`}>
         <Link href={`/blog/${blog.id}`} passHref>
           <Dropdown.Item>Profile</Dropdown.Item>
         </Link>
@@ -97,13 +104,13 @@ function AuthenticatedMenu({ blogId }: AuthenticatedMenuProps) {
 
 function UnauthenticatedMenu() {
   return (
-    <li className="col-span-1">
+    <NavItem>
       <Link href="/login">
-        <Button>
+        <SButton color="light">
           <a>Login</a>
-        </Button>
+        </SButton>
       </Link>
-    </li>
+    </NavItem>
   );
 }
 
@@ -114,7 +121,7 @@ function Search({ className }: SearchProps) {
   return (
     <InputGroup className={className}>
       <DropdownButton
-        variant="outline-secondary"
+        variant="secondary"
         title="Post Category"
         id="input-group-dropdown-1"
       >
@@ -123,9 +130,9 @@ function Search({ className }: SearchProps) {
         <Dropdown.Item href="#">Replies</Dropdown.Item>
       </DropdownButton>
       <FormControl aria-label="Text input with dropdown button" />
-      <Button>
+      <SButton color="secondary">
         <FontAwesomeIcon icon={faSearch} />
-      </Button>
+      </SButton>
     </InputGroup>
   );
 }
@@ -147,9 +154,6 @@ export default function NavBar({}) {
         </Link>
         <StyledSearch />
         <NavList>
-          <NavItem>
-            <ThemeToggler />
-          </NavItem>
           {user?.activeBlog.id ? (
             <AuthenticatedMenu blogId={user.activeBlog.id} />
           ) : (

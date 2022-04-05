@@ -4,6 +4,7 @@ import useBlog from '../backend/hooks/useBlog';
 import CenterSpinner from './CenterSpinner';
 import ErrorAlert from './ErrorAlert';
 import PostCategoryTabs from './PostCategoryTabs';
+import { SButton } from './styles/Button.styled';
 
 type BlogProfileProps = {
   blogId: string;
@@ -40,7 +41,7 @@ export default function BlogProfile({
             <h2>{`@${blog.blogName}`}</h2>
           </Row>
           <Row>
-            <Button>Follow</Button>
+            <SButton>Follow</SButton>
           </Row>
           <PostCategoryTabs postSearchForm={{ blogName: blog.blogName }} />
         </>

@@ -6,8 +6,7 @@ import AxiosUnauthInstance from '../backend/config/AxiosUnauthInstance';
 import { IRefreshTokenRequest } from '../Types/requestTypes/IRefreshTokenRequest';
 import { useAuth } from './AuthContext';
 
-export const AxiosContext = createContext<AxiosInstance | undefined>(undefined);
-
+const AxiosContext = createContext<AxiosInstance>({} as AxiosInstance);
 async function refreshTokenRequest(
   refreshTokenRequestData: IRefreshTokenRequest
 ) {
@@ -31,14 +30,16 @@ export default function AxiosProvider({
   const axiosInstance = useMemo(() => {
     const AxiosApiInstance = axios.create({
       baseURL: axiosApiConfig.baseURL,
-      headers: axiosApiConfig.headers,
       timeout: axiosApiConfig.timeout,
       httpsAgent: axiosApiConfig.httpsAgent,
       withCredentials: axiosApiConfig.withCredentials,
     });
 
     AxiosApiInstance.interceptors.request.use((request) => {
-      request.headers.Authorization = getAccessToken();
+      const accessToken = getAccessToken();
+      if (request.headers && accessToken) {
+        request.headers.Authorization = accessToken;
+      }
       return request;
     });
     const refreshAuthLogic = (failedRequest: any) =>

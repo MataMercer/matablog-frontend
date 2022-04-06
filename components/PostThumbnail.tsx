@@ -14,6 +14,7 @@ import { useAuth } from '../auth/AuthContext';
 import usePost from '../backend/hooks/usePost';
 import PostOptions from './PostOptions';
 import PostMenu from './PostMenu';
+import BlogHandle from './BlogHandle';
 
 const ThumbnailImg = styled.img`
   object-fit: contain;
@@ -54,9 +55,7 @@ export default function PostThumbnail(post: IPost) {
           </Link>
         </Row>
         <Row>
-          <Link href={`/blog/${blog.id}`} passHref>
-            <a>{`@${blog.blogName}`}</a>
-          </Link>
+          <BlogHandle blog={blog} />
         </Row>
         <Row>{createdAt && <DateLabel label="" date={createdAt} />}</Row>
         <Row>

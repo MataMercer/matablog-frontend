@@ -5,6 +5,7 @@ import ILike from './ILike';
 import IPostTag from './IPostTag';
 
 export default interface IPost extends IBaseModel {
+  parentPostId: string;
   title: string;
   content: string;
   postTags: IPostTag[];
@@ -16,4 +17,5 @@ export default interface IPost extends IBaseModel {
   published: boolean;
   blog: IBlog;
   likes: ILike[];
+  replies: IPost[];
 }

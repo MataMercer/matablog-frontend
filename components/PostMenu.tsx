@@ -8,6 +8,11 @@ const SPostMenuContainer = styled.div`
   display: flex;
   justify-content: space-between;
 `;
+const SPostMenuSubContainer = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  gap: 20px;
+`;
 
 interface PostMenuProps {
   post: IPost;
@@ -18,12 +23,15 @@ export default function PostMenu({ post, onSuccess }: PostMenuProps) {
   const { user } = useAuth();
   return (
     <SPostMenuContainer>
-      <LikeButton
-        postId={post.id as string}
-        liked={!!post.likes?.find((l) => l.liker.id === user?.activeBlog.id)}
-        likeCount={post.likes?.length}
-        onSuccess={onSuccess}
-      />
+      <SPostMenuSubContainer>
+        <LikeButton
+          postId={post.id as string}
+          liked={!!post.likes?.find((l) => l.liker.id === user?.activeBlog.id)}
+          likeCount={post.likes?.length}
+          onSuccess={onSuccess}
+        />
+        <div>{post.replies.length} Replies</div>
+      </SPostMenuSubContainer>
       <PostOptions blog={post.blog} postId={post.id} onSuccess={onSuccess} />
     </SPostMenuContainer>
   );

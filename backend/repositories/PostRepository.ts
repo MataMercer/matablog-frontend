@@ -51,6 +51,9 @@ const createPostRequest = async (
   );
   formData.append('sensitive', JSON.stringify(postData.sensitive));
   formData.append('published', JSON.stringify(postData.published));
+  if (postData.parentPostId) {
+    formData.append('parentPostId', postData.parentPostId);
+  }
   postData.files.reverse().forEach((file) => {
     formData.append('files', file);
   });

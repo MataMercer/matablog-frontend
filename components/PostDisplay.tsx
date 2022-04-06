@@ -13,34 +13,16 @@ import { getFileUrls } from '../backend/repositories/FileRepository';
 import DateLabel from './DateLabel';
 import IPost from '../Types/IPost';
 import PostMenu from './PostMenu';
+import CenterSpinner from './CenterSpinner';
+import PostForm from './forms/PostForm';
+import BlogHandle from './BlogHandle';
+import PostReplyDisplay from './PostReplyDisplay';
+import Link from 'next/link';
+
 type PostDisplayProps = {
   postId: string;
   setPageTitle?: (pageTitle: string) => void;
 };
-
-function LoadingPlaceholder() {
-  return (
-    <>
-      <Skeleton height={50} />
-      <Skeleton count={2} />
-      <Row>
-        <Col>
-          <Skeleton />
-        </Col>
-        <Col>
-          <Skeleton />
-        </Col>
-        <Col>
-          <Skeleton />
-        </Col>
-        <Col>
-          <Skeleton />
-        </Col>
-      </Row>
-      <Skeleton count={15} />
-    </>
-  );
-}
 
 type CarouselProps = {
   pictureUrls: string[];
@@ -59,7 +41,7 @@ type TextProps = {
 function Text({ queryResult }: TextProps) {
   const { data: post, status, error } = queryResult;
   if (status === 'loading') {
-    return <LoadingPlaceholder />;
+    return <CenterSpinner status={status} />;
   }
   if (post) {
     const { title, content, postTags } = post;
@@ -70,6 +52,9 @@ function Text({ queryResult }: TextProps) {
         </Row>
         <Row>
           <h2>{title}</h2>
+        </Row>
+        <Row>
+          <BlogHandle blog={post.blog} />
         </Row>
         <Row>
           <ReactMarkdown>{content}</ReactMarkdown>
@@ -118,6 +103,12 @@ export default function PostDisplay({
 
   return (
     <>
+      {post?.parentPostId !== 'null' && (
+        <div>
+          <Link href={`/post/${post?.parentPostId}`}>Reply To</Link>
+        </div>
+      )}
+
       {pictureUrls.length > 0 && (
         <Row className="project-entry-thumbnail-carousel-panel-no-modal">
           <Container>
@@ -138,6 +129,23 @@ export default function PostDisplay({
           }}
         />
       )}
+
+      <div>
+        <h3>Replies</h3>
+        <PostForm
+          postId=""
+          parentPostId={post?.id}
+          onSuccess={() => {
+            queryClient.invalidateQueries(['post', post?.id]);
+          }}
+        />
+
+        <div>
+          {post?.replies.map((it) => (
+            <PostReplyDisplay post={it} />
+          ))}
+        </div>
+      </div>
     </>
   );
 }

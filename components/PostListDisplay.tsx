@@ -70,6 +70,7 @@ export default function PostListDisplay({
                 published={post.published}
                 blog={post.blog}
                 likes={post.likes}
+                replies={post.replies}
               />
             ))}
           </SPostListContainer>

@@ -138,7 +138,7 @@ function Search({ className }: SearchProps) {
 }
 
 const StyledSearch = styled(Search)`
-  width: 35em;
+  max-width: 35em;
 `;
 
 export default function NavBar({}) {

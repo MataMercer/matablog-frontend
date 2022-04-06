@@ -22,9 +22,12 @@ import {
   getFileUrl,
   getFileUrls,
 } from '../../backend/repositories/FileRepository';
+import { SButton } from '../styles/Button.styled';
 
 type PostFormProps = {
   postId: string;
+  parentPostId?: string;
+  onSuccess: () => void;
 };
 
 type PostFormData = {
@@ -33,7 +36,11 @@ type PostFormData = {
   reactTags: Tag[];
 };
 
-export default function PostForm({ postId }: PostFormProps) {
+export default function PostForm({
+  postId,
+  parentPostId,
+  onSuccess,
+}: PostFormProps) {
   const axios = useAxios();
   const { reset, setValue, control, handleSubmit } = useForm<PostFormData>({
     criteriaMode: 'all',
@@ -55,18 +62,14 @@ export default function PostForm({ postId }: PostFormProps) {
   const createPostMutation = useMutation<IPost, ApiError, any, IPostRequest>(
     (data: IPostRequest) => createPostRequest(axios, data),
     {
-      onSuccess: () => {
-        Router.push('/');
-      },
+      onSuccess,
     }
   );
 
   const updatePostMutation = useMutation<IPost, ApiError, any, IPostRequest>(
     (data: IPostRequest) => updatePostRequest(axios, data),
     {
-      onSuccess: () => {
-        Router.push('/');
-      },
+      onSuccess,
     }
   );
 
@@ -118,6 +121,7 @@ export default function PostForm({ postId }: PostFormProps) {
     } else {
       createPostMutation.mutate({
         ...data.postForm,
+        parentPostId,
         postTags: convertReactTagsToITags(),
         files: filesToUpload,
         published,
@@ -136,15 +140,6 @@ export default function PostForm({ postId }: PostFormProps) {
   return (
     <Form onSubmit={handleSubmit(onSubmitPublish)}>
       <ErrorAlert error={createPostError} />
-      <Form.Group>
-        <Form.Label>Title</Form.Label>
-        <Controller
-          name="postForm.title"
-          control={control}
-          defaultValue=""
-          render={({ field }) => <Form.Control type="text" {...field} />}
-        />
-      </Form.Group>
 
       <Controller
         name="postForm.content"
@@ -157,6 +152,7 @@ export default function PostForm({ postId }: PostFormProps) {
             id="content"
             handleTextChange={field.onChange}
             text={field.value}
+            isReply={!!parentPostId}
           />
         )}
       />
@@ -234,16 +230,12 @@ export default function PostForm({ postId }: PostFormProps) {
         />
       </Form.Group>
 
-      <Button
-        color="primary"
-        onClick={handleSubmit(onSubmitDraft)}
-        disabled={loading}
-      >
+      <SButton onClick={handleSubmit(onSubmitDraft)} disabled={loading}>
         Save Draft
-      </Button>
-      <Button color="primary" type="submit" value="publish" disabled={loading}>
+      </SButton>
+      <SButton type="submit" value="publish" disabled={loading}>
         Publish
-      </Button>
+      </SButton>
       {loading ? <Spinner animation="border" /> : null}
     </Form>
   );

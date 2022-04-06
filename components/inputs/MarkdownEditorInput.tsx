@@ -8,10 +8,11 @@ type MarkdownEditorInputProps = {
   id: string;
   handleTextChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   text: string;
+  isReply: boolean;
 };
 
 export default function MarkdownEditorInput(props: MarkdownEditorInputProps) {
-  const { label, id, handleTextChange, text } = props;
+  const { label, id, handleTextChange, text, isReply } = props;
 
   return (
     <Row>
@@ -20,7 +21,7 @@ export default function MarkdownEditorInput(props: MarkdownEditorInputProps) {
           <Form.Label>{label}</Form.Label>
           <Form.Control
             as="textarea"
-            rows={15}
+            rows={isReply ? 4 : 15}
             onChange={handleTextChange}
             name={text}
             id={id}
@@ -28,10 +29,10 @@ export default function MarkdownEditorInput(props: MarkdownEditorInputProps) {
           />
         </Form.Group>
       </Col>
-      <Col>
+      {/* <Col>
         <Form.Label>Markdown Preview</Form.Label>
         {text ? <ReactMarkdown>{text}</ReactMarkdown> : null}
-      </Col>
+      </Col> */}
     </Row>
   );
 }

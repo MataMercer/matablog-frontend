@@ -38,7 +38,7 @@ export default function AxiosProvider({
     AxiosApiInstance.interceptors.request.use((request) => {
       const accessToken = getAccessToken();
       if (request.headers && accessToken) {
-        request.headers.Authorization = `Bearer ${accessToken}`;
+        request.headers.Authorization = `${accessToken}`;
       }
       return request;
     });

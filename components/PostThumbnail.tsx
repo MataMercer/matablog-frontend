@@ -45,15 +45,18 @@ export default function PostThumbnail(post: IPost) {
         </Link>
       </Row>
       <div className="project-entry-text">
-        <Row>
-          <Link scroll={false} href={`/post/${id}`} passHref>
-            <a>
-              <h2>
-                <strong>{title}</strong>
-              </h2>
-            </a>
-          </Link>
-        </Row>
+        {title && title !== 'undefined' && (
+          <Row>
+            <Link scroll={false} href={`/post/${id}`} passHref>
+              <a>
+                <h2>
+                  <strong>{title}</strong>
+                </h2>
+              </a>
+            </Link>
+          </Row>
+        )}
+
         <Row>
           <BlogHandle blog={blog} />
         </Row>

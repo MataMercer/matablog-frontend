@@ -8,8 +8,9 @@ import { ILoginRequest } from '../../Types/requestTypes/ILoginRequest';
 import Link from 'next/link';
 import { url } from 'inspector';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGithub } from '@fortawesome/free-brands-svg-icons';
+import { faGithub, faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { SButton } from '../styles/Button.styled';
+import AxiosApiConfig from '../../backend/config/AxiosApiConfig';
 
 export default function LoginForm() {
   const { login, loginError } = useAuth();
@@ -38,13 +39,14 @@ export default function LoginForm() {
       </Form.Group>
       <SButton type="submit">Login</SButton>
 
-      <Link
-        href={{
-          pathname: 'http://localhost:8080/api/v1/oauth/github/login',
-        }}
-      >
+      <Link href={`${AxiosApiConfig.baseURL}oauth/github/login`}>
         <SButton color="dark">
           <FontAwesomeIcon icon={faGithub} /> Github Login
+        </SButton>
+      </Link>
+      <Link href={`${AxiosApiConfig.baseURL}oauth/google/login`}>
+        <SButton color="light">
+          <FontAwesomeIcon icon={faGoogle} /> Google Login
         </SButton>
       </Link>
     </Form>

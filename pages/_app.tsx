@@ -7,7 +7,7 @@ import { AuthProvider } from '../auth/AuthContext';
 import MainTheme from '../themes/MainTheme';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import AxiosProvider from '../auth/AxiosProvider';
-import GlobalStyle from '../components/styles/Global.styled';
+import GlobalStyle from '../components/ui/Global.styled';
 
 const queryClient = new QueryClient();
 

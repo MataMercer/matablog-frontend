@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Button, Row, Col } from 'react-bootstrap';
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styled from 'styled-components';
@@ -87,7 +86,7 @@ function ThumbnailCarousel({ pictureUrls }: ThumbnailCarouselProps) {
   });
 
   return (
-    <Container>
+    <div>
       {pictureUrls.map((pictureUrl, i) => (
         <PostPicture
           // eslint-disable-next-line react/no-array-index-key
@@ -136,7 +135,7 @@ function ThumbnailCarousel({ pictureUrls }: ThumbnailCarouselProps) {
           />
         </SDirectionButton>
       </Nav>
-    </Container>
+    </div>
   );
 }
 

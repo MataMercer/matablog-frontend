@@ -1,8 +1,8 @@
 import { useQuery, UseQueryOptions } from 'react-query';
-import IPost from '../../Types/IPost';
-import { getPostRequest } from '../repositories/PostRepository';
-import { ApiError } from '../../Types/IApiError';
-import { useAxios } from '../../auth/AxiosProvider';
+import IPost from '../../../Types/IPost';
+import { getPostRequest } from '../../repositories/PostRepository';
+import { ApiError } from '../../../Types/IApiError';
+import { useAxios } from '../../../auth/AxiosProvider';
 
 type UsePostProps = {
   postId: string;

@@ -7,7 +7,7 @@ import { Badge, Row, Col, Container } from 'react-bootstrap';
 import { UseQueryResult } from 'react-query';
 import ThumbnailCarousel from '../ThumbnailCarousel';
 import ErrorAlert from '../ErrorAlert';
-import usePost from '../../backend/hooks/usePost';
+import usePost from '../../backend/hooks/post/usePost';
 import { getFileUrls } from '../../backend/repositories/FileRepository';
 import DateLabel from '../DateLabel';
 import IPost from '../../Types/IPost';

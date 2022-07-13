@@ -16,6 +16,7 @@ export default interface IPost extends IBaseModel {
   sensitive: boolean;
   published: boolean;
   blog: IBlog;
-  likes: ILike[];
+  likeCount: number;
+  liked: boolean;
   replies: IPost[];
 }

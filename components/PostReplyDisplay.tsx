@@ -1,7 +1,7 @@
 import { useQueryClient } from 'react-query';
 import styled from 'styled-components';
 import IPost from '../Types/IPost';
-import BlogHandle from './BlogHandle';
+import BlogHandle from './blog/BlogHandle';
 import PostMenu from './PostMenu';
 
 const PostReplyDisplayContainer = styled.div`

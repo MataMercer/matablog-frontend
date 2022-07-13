@@ -1,16 +1,16 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import BlogProfile from '../../components/BlogProfile';
-import Layout from '../../components/Layout';
+import BlogProfile from '../../../components/blog/BlogProfile';
+import Layout from '../../../components/Layout';
 
 export default function UserProfilePage() {
   const router = useRouter();
-  const { blogId } = router.query;
+  const { blogid } = router.query;
 
   const [title, setTitle] = useState<string>('Blog Profile');
   return (
     <Layout title={title}>
-      <BlogProfile blogId={blogId as string} setPageTitle={setTitle} />
+      <BlogProfile blogId={blogid as string} setPageTitle={setTitle} />
     </Layout>
   );
 }

@@ -8,16 +8,17 @@ import { useQueryClient, UseQueryResult } from 'react-query';
 import { ApiError } from 'next/dist/server/api-utils';
 import ThumbnailCarousel from './ThumbnailCarousel';
 import ErrorAlert from './ErrorAlert';
-import usePost from '../backend/hooks/usePost';
+import usePost from '../backend/hooks/post/usePost';
 import { getFileUrls } from '../backend/repositories/FileRepository';
 import DateLabel from './DateLabel';
 import IPost from '../Types/IPost';
 import PostMenu from './PostMenu';
 import CenterSpinner from './CenterSpinner';
 import PostForm from './forms/PostForm';
-import BlogHandle from './BlogHandle';
+import BlogHandle from './blog/BlogHandle';
 import PostReplyDisplay from './PostReplyDisplay';
 import Link from 'next/link';
+import ProtectComponent from '../auth/ProtectComponent';
 
 type PostDisplayProps = {
   postId: string;
@@ -132,18 +133,21 @@ export default function PostDisplay({
 
       <div>
         <h3>Replies</h3>
-        <PostForm
-          postId=""
-          parentPostId={post?.id}
-          onSuccess={() => {
-            queryClient.invalidateQueries(['post', post?.id]);
-          }}
-        />
+        <ProtectComponent requiredAuthority="POST_CREATE_COMMENT">
+          <PostForm
+            postId=""
+            parentPostId={post?.id}
+            onSuccess={() => {
+              queryClient.invalidateQueries(['post', post?.id]);
+            }}
+          />
+        </ProtectComponent>
 
         <div>
           {post?.replies.map((it) => (
             <PostReplyDisplay post={it} />
           ))}
+          {post?.replies.length === 0 && 'There are no replies yet.'}
         </div>
       </div>
     </>

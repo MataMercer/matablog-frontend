@@ -10,7 +10,7 @@ import React, {
 import Router from 'next/router';
 // eslint-disable-next-line no-unused-vars
 import IUser from '../Types/IUser';
-import useAuthToken from '../backend/hooks/useAuthToken';
+import useAuthToken from '../backend/hooks/auth/useAuthToken';
 import { RequestStatus } from '../Types/enums/RequestStatus';
 import { loginRequest } from '../backend/repositories/UserRepository';
 import { ILoginRequest } from '../Types/requestTypes/ILoginRequest';
@@ -149,6 +149,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (!user) {
         return false;
       }
+
       return user.authorities.includes(requiredAuthority);
     },
     [user]
@@ -162,7 +163,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (!user) {
         return false;
       }
-
       return user.activeBlog.id === blog.id;
     },
     [user]

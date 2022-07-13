@@ -1,7 +1,7 @@
 import React from 'react';
 // eslint-disable-next-line no-unused-vars
 import { useForm } from 'react-hook-form';
-import { Button, Form } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import { useAuth } from '../../auth/AuthContext';
 import ErrorAlert from '../ErrorAlert';
 import { ILoginRequest } from '../../Types/requestTypes/ILoginRequest';
@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { url } from 'inspector';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub, faGoogle } from '@fortawesome/free-brands-svg-icons';
-import { SButton } from '../styles/Button.styled';
+import { Button } from '../ui/Button';
 import AxiosApiConfig from '../../backend/config/AxiosApiConfig';
 
 export default function LoginForm() {
@@ -37,17 +37,17 @@ export default function LoginForm() {
           {...register('password', { required: 'You must enter a password.' })}
         />
       </Form.Group>
-      <SButton type="submit">Login</SButton>
+      <Button type="submit">Login</Button>
 
       <Link href={`${AxiosApiConfig.baseURL}oauth/github/login`}>
-        <SButton color="dark">
+        <Button color="dark">
           <FontAwesomeIcon icon={faGithub} /> Github Login
-        </SButton>
+        </Button>
       </Link>
       <Link href={`${AxiosApiConfig.baseURL}oauth/google/login`}>
-        <SButton color="light">
+        <Button color="light">
           <FontAwesomeIcon icon={faGoogle} /> Google Login
-        </SButton>
+        </Button>
       </Link>
     </Form>
   );

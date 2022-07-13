@@ -1,8 +1,9 @@
 import { AxiosInstance } from 'axios';
 import { IPostRequest } from '../../Types/requestTypes/IPostRequest';
-import { IPostSearchForm } from '../../Types/requestTypes/IPostSearchRequest';
+import { IGetPostsForm } from '../../Types/requestTypes/IGetPostsRequest';
 import IPost from '../../Types/IPost';
 import { IPage } from '../../Types/IPage';
+import { ISearchPostsForm } from '../../Types/requestTypes/ISearchPostsForm';
 
 async function getPostRequest(axios: AxiosInstance, postId: string) {
   const response = await axios({
@@ -16,12 +17,29 @@ async function getPostRequest(axios: AxiosInstance, postId: string) {
 
 async function getPostsRequest(
   axios: AxiosInstance,
-  postSearchForm: IPostSearchForm
+  getPostsForm: IGetPostsForm
 ) {
   const response = await axios({
     method: 'get',
     url: '/post/',
-    params: postSearchForm,
+    params: {
+      ...getPostsForm,
+      blogNames: getPostsForm.blogNames?.join(',')
+    },
+  });
+  return {
+    ...response.data,
+  } as IPage<IPost>;
+}
+
+async function searchPostsRequest(
+  axios: AxiosInstance,
+  searchPostsForm: ISearchPostsForm
+){
+  const response = await axios({
+    method: 'get',
+    url: '/post/search',
+    params: searchPostsForm,
   });
   return {
     ...response.data,
@@ -145,6 +163,7 @@ const likePostRequest = async (
 export {
   getPostRequest,
   getPostsRequest,
+  searchPostsRequest,
   createPostRequest,
   updatePostRequest,
   deletePostRequest,

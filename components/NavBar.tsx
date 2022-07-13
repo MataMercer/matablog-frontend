@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import styled from 'styled-components';
 import {
   faEllipsisH,
@@ -7,20 +7,21 @@ import {
   faPen,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  DropdownButton,
-  Dropdown,
-  InputGroup,
-  FormControl,
-} from 'react-bootstrap';
-import React from 'react';
+import React, { createRef, useEffect, useRef, useState } from 'react';
 import IUser from '../Types/IUser';
 import { useAuth } from '../auth/AuthContext';
-import useBlog from '../backend/hooks/useBlog';
+import useBlog from '../backend/hooks/blog/useBlog';
 import IBlog from '../Types/IBlog';
 import ErrorAlert from './ErrorAlert';
 import ProtectComponent from '../auth/ProtectComponent';
-import { SButton } from './styles/Button.styled';
+import { Button } from './ui/Button';
+import usePostsSearch from '../backend/hooks/post/usePostsSearch';
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownToggle,
+} from './ui/Dropdown';
 
 const Nav = styled.nav`
   font-family: Arial, sans-serif;
@@ -78,26 +79,29 @@ function AuthenticatedMenu({ blogId }: AuthenticatedMenuProps) {
       <ProtectComponent requiredAuthority="POST_CREATE_NEW">
         <NavItem>
           <Link href="/post/create">
-            <SButton color="light">
+            <Button color="light">
               <FontAwesomeIcon icon={faPen} />
               <IconText>Create Post</IconText>
-            </SButton>
+            </Button>
           </Link>
         </NavItem>
       </ProtectComponent>
-      <DropdownButton id="dropdown-basic-button" title={`@${blog.blogName}`}>
-        <Link href={`/blog/${blog.id}`} passHref>
-          <Dropdown.Item>Profile</Dropdown.Item>
-        </Link>
-        <Dropdown.Item href="#/action-2">Settings</Dropdown.Item>
-        <Dropdown.Item
-          onClick={() => {
-            logout();
-          }}
-        >
-          Logout
-        </Dropdown.Item>
-      </DropdownButton>
+      <Dropdown>
+        <DropdownToggle>{`@${blog.blogName}`}</DropdownToggle>
+        <DropdownMenu>
+          <Link href={`/blog/${blog.id}`} passHref>
+            <DropdownItem>Profile</DropdownItem>
+          </Link>
+          <DropdownItem>Settings</DropdownItem>
+          <DropdownItem
+            onClick={() => {
+              logout();
+            }}
+          >
+            Logout
+          </DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
     </>
   );
 }
@@ -106,40 +110,143 @@ function UnauthenticatedMenu() {
   return (
     <NavItem>
       <Link href="/login">
-        <SButton color="light">
+        <Button color="light">
           <a>Login</a>
-        </SButton>
+        </Button>
       </Link>
     </NavItem>
   );
 }
 
+const StyledSearch = styled(Search)`
+  max-width: 35em;
+  display: flex;
+  flex-grow: 1;
+  > Button {
+    border-bottom-left-radius: 0%;
+    border-top-left-radius: 0%;
+  }
+  > Input {
+    border-radius: 0%;
+    min-width: 20em;
+  }
+`;
+const Autocomplete = styled.div`
+  position: relative;
+  display: inline-block;
+  display: flex;
+  align-items: stretch;
+`;
+const AutocompleteItemList = styled.div`
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  z-index: 99;
+  box-shadow: 0 1px 8px 1px rgba(0, 0, 0, 0.3);
+  top: 100%;
+  left: 0;
+  right: 0;
+  > div {
+    padding: 5px;
+    cursor: pointer;
+    background-color: #fff;
+    border-bottom: 1px solid #d4d4d4;
+    &:hover {
+      background-color: gray !important;
+      color: white;
+    }
+  }
+`;
+
+type AutocompleteItemProps = {
+  active: boolean;
+};
+const AutocompleteItem = styled.div<AutocompleteItemProps>`
+  ${({ active, theme }) =>
+    active &&
+    `
+  background-color: ${theme.colors.secondary} !important;
+  color: white;
+`}
+`;
 type SearchProps = {
   className?: string;
 };
 function Search({ className }: SearchProps) {
+  const [val, setVal] = useState<string>('');
+  const [index, setIndex] = useState<number>(-1);
+  const autocompleteThresholdLength = 1;
+  const open = val.length >= autocompleteThresholdLength;
+
+  const {
+    data: postsSearchPage,
+    status,
+    error,
+  } = usePostsSearch({
+    searchPostsForm: {
+      query: val,
+      page: 0,
+      pageSize: 5,
+    },
+  });
+  const list = postsSearchPage?.content || [];
+
   return (
-    <InputGroup className={className}>
-      <DropdownButton
-        variant="secondary"
-        title="Post Category"
-        id="input-group-dropdown-1"
-      >
-        <Dropdown.Item href="#">All</Dropdown.Item>
-        <Dropdown.Item href="#">Media</Dropdown.Item>
-        <Dropdown.Item href="#">Replies</Dropdown.Item>
-      </DropdownButton>
-      <FormControl aria-label="Text input with dropdown button" />
-      <SButton color="secondary">
+    <form onSubmit={() => {}} className={className}>
+      <Autocomplete>
+        <input
+          id="myInput"
+          type="text"
+          name="myCountry"
+          placeholder="Search Matablog..."
+          value={val}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setVal(e.target.value);
+          }}
+          onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+            if (e.key === 'ArrowUp') {
+              e.preventDefault();
+              setIndex(index >= 0 ? index - 1 : 0);
+            } else if (e.key === 'ArrowDown') {
+              e.preventDefault();
+              setIndex(index < list.length - 1 ? index + 1 : list.length - 1);
+            } else if (e.key === 'Enter') {
+              e.preventDefault();
+              if (index > -1) {
+                Router.push(`/post/${list[index].id}`);
+                setVal('');
+                setIndex(-1);
+                e.target.blur();
+              } else {
+                Router.push(`/search`);
+              }
+            }
+          }}
+        />
+        <AutocompleteItemList>
+          {open &&
+            list.map((it, i) => (
+              <AutocompleteItem
+                active={i === index}
+                onClick={() => {
+                  setVal('');
+                  setIndex(-1);
+                  Router.push(`/post/${it.id}`);
+                }}
+              >
+                <div>{it.content}</div>
+                <div>@{it.blog.blogName}</div>
+              </AutocompleteItem>
+            ))}
+        </AutocompleteItemList>
+      </Autocomplete>
+      <Button color="secondary" type="submit">
         <FontAwesomeIcon icon={faSearch} />
-      </SButton>
-    </InputGroup>
+      </Button>
+    </form>
   );
 }
-
-const StyledSearch = styled(Search)`
-  max-width: 35em;
-`;
 
 export default function NavBar({}) {
   const { user } = useAuth();

@@ -8,12 +8,13 @@ import ProtectComponent from '../auth/ProtectComponent';
 import ErrorAlert from './ErrorAlert';
 import { ApiError } from '../Types/IApiError';
 import { useAxios } from '../auth/AxiosProvider';
-import { SLikeButton } from './styles/Button.styled';
+import { SLikeButton } from './ui/Button';
 
 const SLikeButtonContainer = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  align-items: center;
 `;
 
 type LikeButtonProps = {

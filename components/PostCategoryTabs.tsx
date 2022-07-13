@@ -2,11 +2,11 @@ import Link from 'next/link';
 import React, { useState } from 'react';
 import { Tab, Tabs } from 'react-bootstrap';
 import { PostCategory } from '../Types/enums/PostCategory';
-import { IPostSearchForm } from '../Types/requestTypes/IPostSearchRequest';
+import { IGetPostsForm } from '../Types/requestTypes/IGetPostsRequest';
 import PostListDisplay from './PostListDisplay';
 
 type PostCategoryTabsProps = {
-  postSearchForm: IPostSearchForm;
+  postSearchForm: IGetPostsForm;
 };
 
 export default function PostCategoryTabs({
@@ -16,17 +16,20 @@ export default function PostCategoryTabs({
     <Tabs id="controlled-tab-example" defaultActiveKey="ROOT" className="mb-3">
       <Tab eventKey="ROOT" title="All">
         <PostListDisplay
-          postSearchForm={{ ...postSearchForm, category: 'ROOT' }}
+          getPostsForm={{ ...postSearchForm, category: 'ROOT' }}
+          noPostsLabel="This blog has not made any posts yet."
         />
       </Tab>
       <Tab eventKey="MEDIA" title="Media">
         <PostListDisplay
-          postSearchForm={{ ...postSearchForm, category: 'MEDIA' }}
+          getPostsForm={{ ...postSearchForm, category: 'MEDIA' }}
+          noPostsLabel="This blog has not made any posts with media yet."
         />
       </Tab>
       <Tab eventKey="REPLY" title="Replies">
         <PostListDisplay
-          postSearchForm={{ ...postSearchForm, category: 'REPLY' }}
+          getPostsForm={{ ...postSearchForm, category: 'REPLY' }}
+          noPostsLabel="This blog has not replied to anyone yet."
         />
       </Tab>
     </Tabs>

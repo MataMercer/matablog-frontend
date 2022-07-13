@@ -11,10 +11,10 @@ import { getFileUrls } from '../backend/repositories/FileRepository';
 import DateLabel from './DateLabel';
 import LikeButton from './LikeButton';
 import { useAuth } from '../auth/AuthContext';
-import usePost from '../backend/hooks/usePost';
+import usePost from '../backend/hooks/post/usePost';
 import PostOptions from './PostOptions';
 import PostMenu from './PostMenu';
-import BlogHandle from './BlogHandle';
+import BlogHandle from './blog/BlogHandle';
 
 const ThumbnailImg = styled.img`
   object-fit: contain;
@@ -27,9 +27,13 @@ const SPostThumbnailContainer = styled.div`
   padding: 20px;
 `;
 
-export default function PostThumbnail(post: IPost) {
+type PostThumbnailProps = {
+  post: IPost;
+};
+
+export default function PostThumbnail({ post }: PostThumbnailProps) {
   const queryClient = useQueryClient();
-  const { id, title, attachments, postTags, blog, createdAt, likes } = post;
+  const { id, title, attachments, postTags, blog, createdAt } = post;
   const pictureUrls = attachments ? getFileUrls(attachments) : [];
 
   return (

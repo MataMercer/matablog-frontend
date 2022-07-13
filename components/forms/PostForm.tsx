@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Form, Spinner } from 'react-bootstrap';
+import { Form, Spinner } from 'react-bootstrap';
 import Router from 'next/router';
 import { WithContext as ReactTags, Tag } from 'react-tag-input';
 import { useForm, Controller } from 'react-hook-form';
@@ -8,7 +8,7 @@ import MarkdownEditorInput from '../inputs/MarkdownEditorInput';
 import UploadInput, { FileInput } from '../inputs/UploadInput';
 import ErrorAlert from '../ErrorAlert';
 import { IPostRequest } from '../../Types/requestTypes/IPostRequest';
-import usePost from '../../backend/hooks/usePost';
+import usePost from '../../backend/hooks/post/usePost';
 import IPost from '../../Types/IPost';
 import {
   createPostRequest,
@@ -22,7 +22,7 @@ import {
   getFileUrl,
   getFileUrls,
 } from '../../backend/repositories/FileRepository';
-import { SButton } from '../styles/Button.styled';
+import { Button } from '../ui/Button';
 
 type PostFormProps = {
   postId: string;
@@ -230,12 +230,12 @@ export default function PostForm({
         />
       </Form.Group>
 
-      <SButton onClick={handleSubmit(onSubmitDraft)} disabled={loading}>
+      <Button onClick={handleSubmit(onSubmitDraft)} disabled={loading}>
         Save Draft
-      </SButton>
-      <SButton type="submit" value="publish" disabled={loading}>
+      </Button>
+      <Button type="submit" value="publish" disabled={loading}>
         Publish
-      </SButton>
+      </Button>
       {loading ? <Spinner animation="border" /> : null}
     </Form>
   );

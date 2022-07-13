@@ -11,7 +11,6 @@ export interface IPage<T> {
   empty: boolean;
 }
 
-
 export interface Pageable {
   sort: Sort;
   offset: number;
@@ -20,7 +19,6 @@ export interface Pageable {
   paged: boolean;
   unpaged: boolean;
 }
-
 
 export interface Sort {
   sorted: boolean;

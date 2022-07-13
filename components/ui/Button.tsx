@@ -15,7 +15,7 @@ const SLikeButton = styled.button`
   }
 `;
 
-const SButton = styled.button<SButtonProps>`
+const Button = styled.button<SButtonProps>`
   background-color: ${({ color, theme }) =>
     color ? theme.colors[color] : theme.colors.primary};
   padding: 6px 12px 6px;
@@ -30,4 +30,4 @@ const SButton = styled.button<SButtonProps>`
   }
 `;
 
-export { SLikeButton, SButton };
+export { SLikeButton, Button };

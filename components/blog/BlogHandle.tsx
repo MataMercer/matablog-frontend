@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import IBlog from '../Types/IBlog';
+import IBlog from '../../Types/IBlog';
 
 interface BlogHandleProps {
   blog: IBlog;

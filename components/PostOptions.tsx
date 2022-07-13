@@ -1,4 +1,3 @@
-import { Button, Dropdown, DropdownButton } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisH } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
@@ -8,6 +7,12 @@ import { useMutation } from 'react-query';
 import { deletePostRequest } from '../backend/repositories/PostRepository';
 import { ApiError } from '../Types/IApiError';
 import { useAxios } from '../auth/AxiosProvider';
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownToggle,
+} from './ui/Dropdown';
 
 type PostOptionsProps = {
   blog: IBlog;
@@ -27,22 +32,21 @@ export default function PostOptions({
   return (
     <ProtectComponent requiredAuthority="POST_UPDATE" componentBlog={blog}>
       <Dropdown>
-        <Dropdown.Toggle variant="link" id="dropdown-basic">
+        <DropdownToggle>
           <FontAwesomeIcon icon={faEllipsisH} />
-        </Dropdown.Toggle>
-
-        <Dropdown.Menu>
+        </DropdownToggle>
+        <DropdownMenu>
           <Link href={`/post/update/${postId}`} passHref>
-            <Dropdown.Item>Edit</Dropdown.Item>
+            <DropdownItem>Edit</DropdownItem>
           </Link>
-          <Dropdown.Item
+          <DropdownItem
             onClick={() => {
               deletePostMutation.mutate();
             }}
           >
             Delete
-          </Dropdown.Item>
-        </Dropdown.Menu>
+          </DropdownItem>
+        </DropdownMenu>
       </Dropdown>
     </ProtectComponent>
   );

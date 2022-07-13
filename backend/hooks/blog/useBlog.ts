@@ -1,8 +1,8 @@
 import { useQuery } from 'react-query';
-import { useAxios } from '../../auth/AxiosProvider';
-import { ApiError } from '../../Types/IApiError';
-import IBlog from '../../Types/IBlog';
-import { getBlogByIdRequest } from '../repositories/BlogRepository';
+import { useAxios } from '../../../auth/AxiosProvider';
+import { ApiError } from '../../../Types/IApiError';
+import IBlog from '../../../Types/IBlog';
+import { getBlogByIdRequest } from '../../repositories/BlogRepository';
 
 type UseBlogProps = {
   blogId: string;

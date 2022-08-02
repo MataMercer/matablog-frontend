@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import Layout from '../../components/Layout';
-import PostDisplay from '../../components/PostDisplay';
+import PostDisplay from '../../components/PostDisplay/PostDisplay';
 
 export default function PostPage() {
   const router = useRouter();

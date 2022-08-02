@@ -69,10 +69,21 @@ async function followBlogRequest(
   return response.data;
 }
 
+async function getCurrentBlogRequest(axios: AxiosInstance) {
+  const response = await axios({
+    method: 'get',
+    url: `/blog/currentblog`,
+  });
+  return {
+    ...response.data,
+  } as IBlog;
+}
+
 export {
   getBlogByNameRequest,
   getBlogByIdRequest,
   followBlogRequest,
   getFollowersRequest,
   getFollowingRequest,
+  getCurrentBlogRequest,
 };

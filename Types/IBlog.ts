@@ -1,4 +1,5 @@
 import IBaseModel from './IBaseModel';
+import IBlogProfile from './IBlogProfile';
 
 export default interface IBlog extends IBaseModel {
   blogName?: string;
@@ -8,4 +9,5 @@ export default interface IBlog extends IBaseModel {
   follower?: boolean;
   followerCount?: number;
   followingCount?: number;
+  blogProfile?: IBlogProfile;
 }

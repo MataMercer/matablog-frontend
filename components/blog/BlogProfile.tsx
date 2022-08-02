@@ -1,13 +1,19 @@
 import Link from 'next/link';
 import { useEffect } from 'react';
 import { useQueryClient } from 'react-query';
+import styled from 'styled-components';
 import { useAuth } from '../../auth/AuthContext';
 import useBlog from '../../backend/hooks/blog/useBlog';
+import { getFileUrl } from '../../backend/repositories/FileRepository';
 import CenterSpinner from '../CenterSpinner';
 import ErrorAlert from '../ErrorAlert';
 import FollowButton from '../FollowButton';
 import PostCategoryTabs from '../PostCategoryTabs';
 import { Button } from '../ui/Button';
+
+const AvatarImage = styled.img`
+  width: 7.5em;
+`;
 
 type BlogProfileProps = {
   blogId: string;
@@ -40,6 +46,12 @@ export default function BlogProfile({
       <CenterSpinner status={status} />
       {blog && (
         <>
+          <AvatarImage
+            src={
+              blog.blogProfile?.avatar && getFileUrl(blog.blogProfile?.avatar)
+            }
+            alt="avatarImage"
+          />
           <h1>{`${blog?.preferredBlogName}`}</h1>
           <h2>{`@${blog.blogName}`}</h2>
 

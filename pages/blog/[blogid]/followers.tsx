@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import useFollowers from '../../../backend/hooks/blog/useFollowers';
+import BlogHandle from '../../../components/blog/BlogHandle';
 import BlogThumbnail from '../../../components/blog/BlogThumbnail';
 import Layout from '../../../components/Layout';
 
@@ -24,8 +25,9 @@ export default function FollowersPage() {
   return (
     <Layout title={title}>
       <h1>Followers</h1>
+      <p>Blogs that follow this blog.</p>
       {followers && followers.length > 0 ? (
-        followers.map((follow) => <BlogThumbnail blog={follow.follower} />)
+        followers.map((follow) => <BlogHandle blog={follow.follower} />)
       ) : (
         <p>This blog does not have any followers yet.</p>
       )}

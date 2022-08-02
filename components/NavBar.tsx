@@ -22,6 +22,7 @@ import {
   DropdownMenu,
   DropdownToggle,
 } from './ui/Dropdown';
+import { getFileUrl } from '../backend/repositories/FileRepository';
 
 const Nav = styled.nav`
   font-family: Arial, sans-serif;
@@ -51,6 +52,10 @@ const Brand = styled.a`
 `;
 const BrandImage = styled.img`
   width: 2.5em;
+`;
+const AvatarImage = styled.img`
+  width: 2em;
+  margin-right: 0.5em;
 `;
 const H1 = styled.h1`
   font-weight: 900;
@@ -87,7 +92,17 @@ function AuthenticatedMenu({ blogId }: AuthenticatedMenuProps) {
         </NavItem>
       </ProtectComponent>
       <Dropdown>
-        <DropdownToggle>{`@${blog.blogName}`}</DropdownToggle>
+        <DropdownToggle>
+          <div>
+            <AvatarImage
+              src={
+                blog.blogProfile?.avatar && getFileUrl(blog.blogProfile?.avatar)
+              }
+              alt="blogAvatar"
+            />
+            {`@${blog.blogName}`}
+          </div>
+        </DropdownToggle>
         <DropdownMenu>
           <Link href={`/blog/${blog.id}`} passHref>
             <DropdownItem>Profile</DropdownItem>

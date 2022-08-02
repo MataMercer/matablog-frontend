@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Spinner } from 'react-bootstrap';
+import { Form, Spinner, Stack } from 'react-bootstrap';
 import Router from 'next/router';
 import { WithContext as ReactTags, Tag } from 'react-tag-input';
 import { useForm, Controller } from 'react-hook-form';
@@ -23,6 +23,11 @@ import {
   getFileUrls,
 } from '../../backend/repositories/FileRepository';
 import { Button } from '../ui/Button';
+import styled from 'styled-components';
+
+const FlagInputWrapper = styled.div`
+  display: flex;
+`;
 
 type PostFormProps = {
   postId: string;
@@ -79,7 +84,6 @@ export default function PostForm({
   const { error: createPostError } = createPostMutation;
 
   useEffect(() => {
-    console.log('erp');
     if (fetchedPost && postId) {
       reset({
         postForm: fetchedPost,
@@ -183,6 +187,7 @@ export default function PostForm({
                 setValue('reactTags', newTags);
               }}
               delimiters={delimiters}
+              autofocus={false}
             />
           )}
         />
@@ -206,33 +211,40 @@ export default function PostForm({
         />
       </Form.Group>
 
-      <Form.Group>
-        <Form.Label>Mark as sensitive</Form.Label>
-        <Controller
-          name="postForm.sensitive"
-          control={control}
-          defaultValue={false}
-          render={({ field }) => (
-            <Form.Check value={field.value as any} onChange={field.onChange} />
-          )}
-        />
-      </Form.Group>
+      <Stack direction="horizontal" gap={3}>
+        <Form.Group>
+          <Form.Label>Mark as sensitive</Form.Label>
+          <Controller
+            name="postForm.sensitive"
+            control={control}
+            defaultValue={false}
+            render={({ field }) => (
+              <Form.Check
+                value={field.value as any}
+                onChange={field.onChange}
+              />
+            )}
+          />
+        </Form.Group>
 
-      <Form.Group>
-        <Form.Label>Allow Community Tagging</Form.Label>
-        <Controller
-          name="postForm.communityTaggingEnabled"
-          control={control}
-          defaultValue={false}
-          render={({ field }) => (
-            <Form.Check value={field.value as any} onChange={field.onChange} />
-          )}
-        />
-      </Form.Group>
-
-      <Button onClick={handleSubmit(onSubmitDraft)} disabled={loading}>
+        <Form.Group>
+          <Form.Label>Allow Community Tagging</Form.Label>
+          <Controller
+            name="postForm.communityTaggingEnabled"
+            control={control}
+            defaultValue={false}
+            render={({ field }) => (
+              <Form.Check
+                value={field.value as any}
+                onChange={field.onChange}
+              />
+            )}
+          />
+        </Form.Group>
+      </Stack>
+      {/* <Button onClick={handleSubmit(onSubmitDraft)} disabled={loading}>
         Save Draft
-      </Button>
+      </Button> */}
       <Button type="submit" value="publish" disabled={loading}>
         Publish
       </Button>

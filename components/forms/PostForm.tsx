@@ -4,6 +4,7 @@ import Router from 'next/router';
 import { WithContext as ReactTags, Tag } from 'react-tag-input';
 import { useForm, Controller } from 'react-hook-form';
 import { useMutation } from 'react-query';
+import styled from 'styled-components';
 import MarkdownEditorInput from '../inputs/MarkdownEditorInput';
 import UploadInput, { FileInput } from '../inputs/UploadInput';
 import ErrorAlert from '../ErrorAlert';
@@ -23,7 +24,6 @@ import {
   getFileUrls,
 } from '../../backend/repositories/FileRepository';
 import { Button } from '../ui/Button';
-import styled from 'styled-components';
 
 const FlagInputWrapper = styled.div`
   display: flex;
@@ -101,8 +101,9 @@ export default function PostForm({
 
   const onSubmit = (published: boolean) => (data: PostFormData) => {
     const { pictureFiles } = data;
+    console.log(data.reactTags);
     const convertReactTagsToITags = () =>
-      data.reactTags.map((reactTag) => ({ name: reactTag.id } as IPostTag));
+      data.reactTags.map((reactTag) => ({ name: reactTag.text } as IPostTag));
     const filesToUpload = pictureFiles
       .filter((it) => it.data)
       .map((it) => it.data);

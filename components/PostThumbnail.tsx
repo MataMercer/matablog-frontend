@@ -6,6 +6,7 @@ import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { useQueryClient } from 'react-query';
+import Image from 'next/image';
 import IPost from '../Types/IPost';
 import { getFileUrls } from '../backend/repositories/FileRepository';
 import DateLabel from './DateLabel';
@@ -16,10 +17,10 @@ import PostOptions from './PostOptions';
 import PostMenu from './PostMenu';
 import BlogHandle from './blog/BlogHandle';
 
-const ThumbnailImg = styled.img`
-  object-fit: contain;
+const ThumbnailImg = styled.div`
   height: 10em;
   width: 100%;
+  position: relative;
 `;
 
 const SPostThumbnailContainer = styled.div`
@@ -36,15 +37,21 @@ export default function PostThumbnail({ post }: PostThumbnailProps) {
   const { id, title, attachments, postTags, blog, createdAt } = post;
   const pictureUrls = attachments ? getFileUrls(attachments) : [];
 
+  const src = pictureUrls.length > 0 ? pictureUrls[0] : '/no-image.png';
   return (
     <SPostThumbnailContainer>
       <Row>
         <Link scroll={false} href={`/post/${id}`} passHref>
           <a>
-            <ThumbnailImg
-              src={pictureUrls.length > 0 ? pictureUrls[0] : '/no-image.png'}
-              alt="ProjectEntryThumbnail"
-            />
+            <ThumbnailImg>
+              <Image
+                loader={() => src}
+                src={src}
+                alt="ProjectEntryThumbnail"
+                layout="fill"
+                objectFit="contain"
+              />
+            </ThumbnailImg>
           </a>
         </Link>
       </Row>

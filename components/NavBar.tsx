@@ -7,7 +7,7 @@ import {
   faPen,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { createRef, useEffect, useRef, useState } from 'react';
+import React, { createRef, useEffect, useMemo, useRef, useState } from 'react';
 import IUser from '../Types/IUser';
 import { useAuth } from '../auth/AuthContext';
 import useBlog from '../backend/hooks/blog/useBlog';
@@ -22,7 +22,7 @@ import {
   DropdownMenu,
   DropdownToggle,
 } from './ui/Dropdown';
-import { getFileUrl } from '../backend/repositories/FileRepository';
+import { getFileUrl, useFileUrl } from '../backend/repositories/FileRepository';
 
 const Nav = styled.nav`
   font-family: Arial, sans-serif;
@@ -76,6 +76,12 @@ function AuthenticatedMenu({ blogId }: AuthenticatedMenuProps) {
   const { logout } = useAuth();
   const router = useRouter();
   const { data: blog, status, error } = useBlog({ blogId });
+
+  const avatarUrl = useFileUrl(
+    blog?.blogProfile?.avatar?.id,
+    blog?.blogProfile?.avatar?.name
+  );
+
   if (!blog) {
     return <ErrorAlert error={error} />;
   }
@@ -94,12 +100,7 @@ function AuthenticatedMenu({ blogId }: AuthenticatedMenuProps) {
       <Dropdown>
         <DropdownToggle>
           <div>
-            <AvatarImage
-              src={
-                blog.blogProfile?.avatar && getFileUrl(blog.blogProfile?.avatar)
-              }
-              alt="blogAvatar"
-            />
+            <AvatarImage src={avatarUrl} alt="blogAvatar" />
             {`@${blog.blogName}`}
           </div>
         </DropdownToggle>

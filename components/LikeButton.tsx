@@ -9,6 +9,7 @@ import ErrorAlert from './ErrorAlert';
 import { ApiError } from '../Types/IApiError';
 import { useAxios } from '../auth/AxiosProvider';
 import { SLikeButton } from './ui/Button';
+import Link from 'next/link';
 
 const SLikeButtonContainer = styled.div`
   display: flex;
@@ -47,7 +48,9 @@ function LikeButton({ postId, liked, likeCount, onSuccess }: LikeButtonProps) {
           </SLikeButton>
         </div>
       </ProtectComponent>
-      {likeCount} Likes
+      <Link href={`/post/${postId}/likes`}>
+        <a>{likeCount} Likes</a>
+      </Link>
     </SLikeButtonContainer>
   );
 }

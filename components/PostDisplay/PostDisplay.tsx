@@ -6,6 +6,7 @@ import { Badge, Row, Container } from 'react-bootstrap';
 import { useQueryClient, UseQueryResult } from 'react-query';
 import { ApiError } from 'next/dist/server/api-utils';
 import Link from 'next/link';
+import styled from 'styled-components';
 import ThumbnailCarousel from '../ThumbnailCarousel';
 import ErrorAlert from '../ErrorAlert';
 import usePost from '../../backend/hooks/post/usePost';
@@ -18,7 +19,6 @@ import PostForm from '../forms/PostForm';
 import BlogHandle from '../blog/BlogHandle';
 import PostReplyDisplay from '../PostReplyDisplay';
 import ProtectComponent from '../../auth/ProtectComponent';
-import styled from 'styled-components';
 
 const TimestampWrapper = styled.div`
   color: gray;

@@ -1,11 +1,4 @@
-import React, {
-  FC,
-  useState,
-  useCallback,
-  ReactComponentElement,
-  MouseEvent,
-  useEffect,
-} from 'react';
+import React, { useState, useCallback, MouseEvent, useEffect } from 'react';
 import update from 'immutability-helper';
 import { Card } from './DraggableCard';
 

@@ -60,7 +60,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     async function loadUser() {
-      const decodedAccessToken: any = decodeJwt(accessToken);
+      const decodedAccessToken: any = decodeJwt(accessToken || '');
       const userData: IUser = {
         id: decodedAccessToken.userId,
         username: decodedAccessToken.username,
@@ -142,7 +142,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const hasAuthority = useCallback(
     (requiredAuthority: UserAuthority | undefined) => {
-      console.log('derp');
       if (!requiredAuthority) {
         return true;
       }

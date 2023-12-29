@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import styled from 'styled-components';
-import { getFileUrl } from '../../backend/repositories/FileRepository';
 import IBlog from '../../Types/IBlog';
 
 const AvatarImage = styled.img`
@@ -20,20 +19,13 @@ interface BlogHandleProps {
 export default function BlogHandle({ blog }: BlogHandleProps) {
   return (
     <Link href={`/blog/${blog.id}`} passHref>
-      <a>
-        <AvatarWithTextWrapper>
-          <AvatarImage
-            src={
-              blog.blogProfile?.avatar && getFileUrl(blog.blogProfile.avatar)
-            }
-            alt="avatarImage"
-          />
-          <div>
-            <div>{blog.preferredBlogName}</div>
-            <div>{`@${blog.blogName}`}</div>
-          </div>
-        </AvatarWithTextWrapper>
-      </a>
+      <AvatarWithTextWrapper>
+        <AvatarImage src={blog.blogProfile?.avatarUrl} alt="avatarImage" />
+        <div>
+          <div>{blog.blogProfile?.preferredBlogName}</div>
+          <div>{`@${blog.blogName}`}</div>
+        </div>
+      </AvatarWithTextWrapper>
     </Link>
   );
 }

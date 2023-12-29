@@ -24,7 +24,7 @@ async function getPostsRequest(
     url: '/post/',
     params: {
       ...getPostsForm,
-      blogNames: getPostsForm.blogNames?.join(',')
+      blogNames: getPostsForm.blogNames?.join(','),
     },
   });
   return {
@@ -35,7 +35,7 @@ async function getPostsRequest(
 async function searchPostsRequest(
   axios: AxiosInstance,
   searchPostsForm: ISearchPostsForm
-){
+) {
   const response = await axios({
     method: 'get',
     url: '/post/search',
@@ -114,7 +114,7 @@ const updatePostRequest = async (
   formData.append(
     'attachments',
     convertJsonListToFormDataList(
-      postData.attachments?.reverse().map((it) => it.id) || []
+      postData.attachments?.map((it) => it.id) || []
     )
   );
   formData.append(

@@ -1,5 +1,8 @@
+/* eslint-disable no-use-before-define */
+/* eslint-disable no-undef */
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import useOnclickOutside from 'react-cool-onclickoutside';
 import { Button } from './Button';
 
 const SDropdown = styled.div`
@@ -8,7 +11,7 @@ const SDropdown = styled.div`
 `;
 
 type SDropdownContentProps = {
-  active: boolean;
+  active: string;
 };
 const SDropdownContent = styled.div<SDropdownContentProps>`
   display: none;
@@ -18,7 +21,7 @@ const SDropdownContent = styled.div<SDropdownContentProps>`
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
   ${({ active, theme }) =>
-    active &&
+    active !== 'false' &&
     `
     display:block
 `}
@@ -37,19 +40,9 @@ type DropdownProps = {
 };
 
 export function Dropdown({ children }: DropdownProps) {
-  const [active, setActive] = useState<boolean>(false);
-
-  useEffect(() => {
-    function handleEscapeClick() {
-      if (active) {
-        setActive(false);
-      }
-    }
-    document.addEventListener('click', handleEscapeClick, false);
-
-    return () => {
-      document.removeEventListener('click', handleEscapeClick, false);
-    };
+  const [active, setActive] = useState(false);
+  const clickOutsideRef = useOnclickOutside(() => {
+    setActive(false);
   });
 
   return (
@@ -62,7 +55,7 @@ export function Dropdown({ children }: DropdownProps) {
         {children.find(({ type }) => type === DropdownToggle)}
       </Button>
 
-      <SDropdownContent active={active}>
+      <SDropdownContent ref={clickOutsideRef} active={active.toString()}>
         {children.find(({ type }) => type === DropdownMenu)}
       </SDropdownContent>
     </SDropdown>

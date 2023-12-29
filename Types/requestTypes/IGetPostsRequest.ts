@@ -8,6 +8,6 @@ interface IGetPostsFormCore {
   following?: boolean;
 }
 
-type IGetPostsFormWithPage = IGetPostsFormCore | IPageRequest;
+type IGetPostsFormWithPage = IGetPostsFormCore & IPageRequest;
 
 export type { IGetPostsFormWithPage as IGetPostsForm };

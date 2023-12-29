@@ -1,9 +1,12 @@
 import { AxiosInstance } from 'axios';
 import IBlog from '../../Types/IBlog';
 import IFollow from '../../Types/IFollow';
+import ILike from '../../Types/ILike';
 import { IPage } from '../../Types/IPage';
+import { IBlogProfileRequest } from '../../Types/requestTypes/IBlogProfileRequest';
 import { IFollowRequest } from '../../Types/requestTypes/IFollowRequest';
 import { IPageRequest } from '../../Types/requestTypes/IPageRequest';
+import { objectToFormData } from '../../util/FormDataUtil';
 
 async function getBlogByNameRequest(axios: AxiosInstance, blogName: String) {
   const response = await axios({
@@ -15,7 +18,7 @@ async function getBlogByNameRequest(axios: AxiosInstance, blogName: String) {
   } as IBlog;
 }
 
-async function getBlogByIdRequest(axios: AxiosInstance, id: String) {
+async function getBlogByIdRequest(axios: AxiosInstance, id: string) {
   const response = await axios({
     method: 'get',
     url: `/blog/${id}`,
@@ -23,6 +26,16 @@ async function getBlogByIdRequest(axios: AxiosInstance, id: String) {
   return {
     ...response.data,
   } as IBlog;
+}
+
+async function getBlogLikesRequest(axios: AxiosInstance, id: string) {
+  const response = await axios({
+    method: 'get',
+    url: `/blog/${id}/likes`,
+  });
+  return {
+    ...response.data,
+  } as IPage<ILike>;
 }
 
 async function getFollowersRequest(
@@ -79,11 +92,25 @@ async function getCurrentBlogRequest(axios: AxiosInstance) {
   } as IBlog;
 }
 
+async function editBlogProfileRequest(
+  axios: AxiosInstance,
+  blogProfileRequest: IBlogProfileRequest
+) {
+  const response = await axios({
+    method: 'put',
+    url: '/blog/edit',
+    data: objectToFormData(blogProfileRequest),
+  });
+  return response.data;
+}
+
 export {
   getBlogByNameRequest,
   getBlogByIdRequest,
   followBlogRequest,
+  getBlogLikesRequest,
   getFollowersRequest,
   getFollowingRequest,
   getCurrentBlogRequest,
+  editBlogProfileRequest,
 };

@@ -19,10 +19,6 @@ import IPostTag from '../../Types/IPostTag';
 import { ApiError } from '../../Types/IApiError';
 import { useAxios } from '../../auth/AxiosProvider';
 import IFile from '../../Types/IFile';
-import {
-  getFileUrl,
-  getFileUrls,
-} from '../../backend/repositories/FileRepository';
 import { Button } from '../ui/Button';
 
 const FlagInputWrapper = styled.div`
@@ -92,7 +88,7 @@ export default function PostForm({
           text: postTag.name,
         })),
         pictureFiles: fetchedPost.attachments?.map((it) => ({
-          url: getFileUrl(it),
+          url: it.url,
           id: it.id,
         })),
       });
@@ -101,7 +97,6 @@ export default function PostForm({
 
   const onSubmit = (published: boolean) => (data: PostFormData) => {
     const { pictureFiles } = data;
-    console.log(data.reactTags);
     const convertReactTagsToITags = () =>
       data.reactTags.map((reactTag) => ({ name: reactTag.text } as IPostTag));
     const filesToUpload = pictureFiles
@@ -112,8 +107,6 @@ export default function PostForm({
     const attachmentInsertions = pictureFiles
       .reverse()
       .flatMap((it, index) => (it.data ? index : []));
-    console.log(attachmentInsertions);
-    console.log(pictureFiles);
     if (postId) {
       updatePostMutation.mutate({
         ...data.postForm,
@@ -135,7 +128,7 @@ export default function PostForm({
   };
 
   const onSubmitPublish = onSubmit(true);
-  const onSubmitDraft = onSubmit(false);
+  // const onSubmitDraft = onSubmit(false);
 
   const KeyCodes = {
     comma: 188,
@@ -180,6 +173,7 @@ export default function PostForm({
                   'reactTags',
                   field.value.filter((tag, index) => index !== i)
                 );
+                console.log(field.value.filter((tag, index) => index === i));
               }}
               handleDrag={(tag, currPos, newPos) => {
                 const newTags = field.value.slice();

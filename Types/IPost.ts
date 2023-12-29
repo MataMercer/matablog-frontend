@@ -1,7 +1,6 @@
 import IBaseModel from './IBaseModel';
 import IBlog from './IBlog';
 import IFile from './IFile';
-import ILike from './ILike';
 import IPostTag from './IPostTag';
 
 export default interface IPost extends IBaseModel {
@@ -10,6 +9,7 @@ export default interface IPost extends IBaseModel {
   content: string;
   postTags: IPostTag[];
   attachments?: IFile[];
+  thumbImageUrl: string;
   createdAt?: string;
   updatedAt?: string;
   communityTaggingEnabled: boolean;
@@ -17,6 +17,6 @@ export default interface IPost extends IBaseModel {
   published: boolean;
   blog: IBlog;
   likeCount: number;
-  liked: boolean;
+  replyCount: number;
   replies: IPost[];
 }

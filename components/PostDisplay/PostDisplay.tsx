@@ -7,6 +7,7 @@ import { useQueryClient, UseQueryResult } from 'react-query';
 import { ApiError } from 'next/dist/server/api-utils';
 import Link from 'next/link';
 import styled from 'styled-components';
+import dynamic from 'next/dynamic';
 import ThumbnailCarousel from '../ThumbnailCarousel';
 import ErrorAlert from '../ErrorAlert';
 import usePost from '../../backend/hooks/post/usePost';
@@ -15,11 +16,12 @@ import DateLabel from '../DateLabel';
 import IPost from '../../Types/IPost';
 import PostMenu from '../PostMenu';
 import CenterSpinner from '../CenterSpinner';
-import PostForm from '../forms/PostForm';
+// import PostForm from '../forms/PostForm';
 import BlogHandle from '../blog/BlogHandle';
 import PostReplyDisplay from '../PostReplyDisplay';
 import ProtectComponent from '../../auth/ProtectComponent';
 
+const PostForm = dynamic(() => import('../forms/PostForm'), { ssr: false });
 const TimestampWrapper = styled.div`
   color: gray;
 `;
@@ -103,7 +105,7 @@ export default function PostDisplay({
     }
   }, [post, postId, setPageTitle]);
 
-  const pictureUrls = post?.attachments ? getFileUrls(post?.attachments) : [];
+  const pictureUrls = post?.attachments?.map((it) => it.url) || [];
 
   return (
     <>
@@ -122,17 +124,10 @@ export default function PostDisplay({
       )}
       <Row className="project-entry-thumbnail-text-panel-no-modal">
         <Container>
-          <Text queryResult={useQueryResult} />
+          <Text queryResult={useQueryResult as any} />
         </Container>
       </Row>
-      {post && (
-        <PostMenu
-          post={post}
-          onSuccess={() => {
-            queryClient.invalidateQueries(['post', post.id]);
-          }}
-        />
-      )}
+      {post && <PostMenu post={post} />}
 
       <div>
         <h3>Replies ({post?.replies.length})</h3>
@@ -147,9 +142,7 @@ export default function PostDisplay({
         </ProtectComponent>
 
         <div>
-          {post?.replies.map((it) => (
-            <PostReplyDisplay post={it} />
-          ))}
+          {post?.replies.map((it) => <PostReplyDisplay post={it} />)}
           {post?.replies.length === 0 && 'There are no replies yet.'}
         </div>
       </div>

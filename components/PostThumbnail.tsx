@@ -34,36 +34,31 @@ type PostThumbnailProps = {
 
 export default function PostThumbnail({ post }: PostThumbnailProps) {
   const queryClient = useQueryClient();
-  const { id, title, attachments, postTags, blog, createdAt } = post;
-  const pictureUrls = attachments ? getFileUrls(attachments) : [];
+  const { id, title, blog, createdAt, thumbImageUrl } = post;
 
-  const src = pictureUrls.length > 0 ? pictureUrls[0] : '/no-image.png';
+  const src = thumbImageUrl || '/no-image.png';
   return (
     <SPostThumbnailContainer>
       <Row>
         <Link scroll={false} href={`/post/${id}`} passHref>
-          <a>
-            <ThumbnailImg>
-              <Image
-                loader={() => src}
-                src={src}
-                alt="ProjectEntryThumbnail"
-                layout="fill"
-                objectFit="contain"
-              />
-            </ThumbnailImg>
-          </a>
+          <ThumbnailImg>
+            <Image
+              loader={() => src}
+              src={src}
+              alt="PostThumbnailImage"
+              layout="fill"
+              objectFit="contain"
+            />
+          </ThumbnailImg>
         </Link>
       </Row>
       <div className="project-entry-text">
         {title && title !== 'undefined' && (
           <Row>
             <Link scroll={false} href={`/post/${id}`} passHref>
-              <a>
-                <h2>
-                  <strong>{title}</strong>
-                </h2>
-              </a>
+              <h2>
+                <strong>{title}</strong>
+              </h2>
             </Link>
           </Row>
         )}
@@ -73,12 +68,7 @@ export default function PostThumbnail({ post }: PostThumbnailProps) {
         </Row>
         <Row>{createdAt && <DateLabel label="" date={createdAt} />}</Row>
         <Row>
-          <PostMenu
-            post={post}
-            onSuccess={() => {
-              queryClient.invalidateQueries('posts');
-            }}
-          />
+          <PostMenu post={post} />
         </Row>
       </div>
     </SPostThumbnailContainer>

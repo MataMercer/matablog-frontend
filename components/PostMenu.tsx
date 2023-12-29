@@ -1,6 +1,8 @@
+import { useQueryClient } from 'react-query';
 import styled from 'styled-components';
 import { useAuth } from '../auth/AuthContext';
 import ProtectComponent from '../auth/ProtectComponent';
+import useLikes from '../backend/hooks/blog/useLikes';
 import IPost from '../Types/IPost';
 import LikeButton from './LikeButton';
 import PostOptions from './PostOptions';
@@ -19,22 +21,31 @@ const SPostMenuSubContainer = styled.div`
 
 interface PostMenuProps {
   post: IPost;
-  onSuccess: () => void;
 }
 
-export default function PostMenu({ post, onSuccess }: PostMenuProps) {
+export default function PostMenu({ post }: PostMenuProps) {
+  const queryClient = useQueryClient();
   return (
     <SPostMenuContainer>
       <SPostMenuSubContainer>
         <LikeButton
           postId={post.id as string}
-          liked={post.liked}
           likeCount={post.likeCount}
-          onSuccess={onSuccess}
+          onSuccess={() => {
+            queryClient.invalidateQueries('likes');
+            queryClient.invalidateQueries('posts');
+            queryClient.invalidateQueries('post');
+          }}
         />
-        <div>{post.replies.length} Replies</div>
+        <div>{post.replyCount} Replies</div>
       </SPostMenuSubContainer>
-      <PostOptions blog={post.blog} postId={post.id} onSuccess={onSuccess} />
+      <PostOptions
+        blog={post.blog}
+        postId={post.id}
+        onSuccess={() => {
+          queryClient.invalidateQueries('posts');
+        }}
+      />
     </SPostMenuContainer>
   );
 }

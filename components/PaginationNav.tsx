@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 import Link from 'next/link';
 import router from 'next/router';
 import { Pagination } from 'react-bootstrap';

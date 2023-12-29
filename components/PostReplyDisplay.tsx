@@ -19,12 +19,7 @@ export default function PostReplyDisplay({ post }: IPostReplyDisplay) {
     <PostReplyDisplayContainer>
       <BlogHandle blog={post.blog} />
       <div>{post.content}</div>
-      <PostMenu
-        post={post}
-        onSuccess={() => {
-          queryClient.invalidateQueries(['post', post?.parentPostId]);
-        }}
-      />
+      <PostMenu post={post} />
     </PostReplyDisplayContainer>
   );
 }

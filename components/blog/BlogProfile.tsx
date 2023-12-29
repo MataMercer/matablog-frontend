@@ -4,7 +4,6 @@ import { useQueryClient } from 'react-query';
 import styled from 'styled-components';
 import { useAuth } from '../../auth/AuthContext';
 import useBlog from '../../backend/hooks/blog/useBlog';
-import { getFileUrl } from '../../backend/repositories/FileRepository';
 import CenterSpinner from '../CenterSpinner';
 import ErrorAlert from '../ErrorAlert';
 import FollowButton from '../FollowButton';
@@ -19,6 +18,11 @@ type BlogProfileProps = {
   blogId: string;
   setPageTitle: (pageTitle: string) => void;
 };
+
+const BlogProfileHeader = styled.div`
+  display: flex;
+  flex-flow: row;
+`;
 
 export default function BlogProfile({
   blogId,
@@ -39,52 +43,57 @@ export default function BlogProfile({
     if (status === 'success' && blog) {
       setPageTitle('blog');
     }
-  }, [status]);
+  }, [blog, setPageTitle, status]);
   return (
     <>
       <ErrorAlert error={error} />
       <CenterSpinner status={status} />
       {blog && (
-        <>
-          <AvatarImage
-            src={
-              blog.blogProfile?.avatar && getFileUrl(blog.blogProfile?.avatar)
-            }
-            alt="avatarImage"
-          />
-          <h1>{`${blog?.preferredBlogName}`}</h1>
-          <h2>{`@${blog.blogName}`}</h2>
+        <div>
+          <BlogProfileHeader>
+            <div>
+              <AvatarImage
+                src={blog.blogProfile?.avatarUrl}
+                alt="avatarImage"
+              />
+              <h1>{`${blog?.blogProfile?.preferredBlogName}`}</h1>
+              <h2>{`@${blog.blogName}`}</h2>
+            </div>
+            {blog.id !== user?.activeBlog.id ? (
+              <>
+                <p>{blog.follower && !blog.following && 'Follows you'}</p>
+                <p>{blog.follower && blog.following && 'Mutual Follower'}</p>
+                <FollowButton
+                  blogId={blog.id}
+                  followed={!!blog.following}
+                  onSuccess={() => {
+                    queryClient.invalidateQueries(['blog', blog.id]);
+                  }}
+                />{' '}
+              </>
+            ) : (
+              <Link href={`/blog/${blog.id}/editBlogProfile`}>
+                <Button>Edit Profile</Button>
+              </Link>
+            )}
 
-          {blog.id !== user?.activeBlog.id ? (
-            <>
-              <p>{blog.follower && !blog.following && 'Follows you'}</p>
-              <p>{blog.follower && blog.following && 'Mutual Follower'}</p>
-              <FollowButton
-                blogId={blog.id}
-                followed={!!blog.following}
-                onSuccess={() => {
-                  queryClient.invalidateQueries(['blog', blog.id]);
-                }}
-              />{' '}
-            </>
-          ) : (
-            <Button>Edit Profile</Button>
-          )}
 
-          <div>
-            <Link
-              href={`/blog/${blog.id}/followers`}
-            >{`${blog.followerCount} Followers`}</Link>
-          </div>
-          <div>
-            <Link
-              href={`/blog/${blog.id}/following`}
-            >{`${blog.followingCount} Following`}</Link>
-          </div>
+            <div>
+              <Link
+                href={`/blog/${blog.id}/followers`}
+              >{`${blog.followerCount} Followers`}</Link>
+            </div>
+            <div>
+              <Link
+                href={`/blog/${blog.id}/following`}
+              >{`${blog.followingCount} Following`}</Link>
+            </div>
+          </BlogProfileHeader>
+
           <PostCategoryTabs
             postSearchForm={{ blogNames: [blog.blogName as string] }}
           />
-        </>
+        </div>
       )}
     </>
   );

@@ -90,7 +90,7 @@ export default function PostDisplay({
     }
   }, [post, postId, setPageTitle]);
 
-  const pictureUrls = post?.attachments ? getFileUrls(post?.attachments) : [];
+  const pictureUrls = (post as any)?.attachmentUrls || [];
 
   return (
     <>

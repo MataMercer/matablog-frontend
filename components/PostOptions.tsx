@@ -1,9 +1,9 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisH } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
+import { useMutation } from 'react-query';
 import ProtectComponent from '../auth/ProtectComponent';
 import IBlog from '../Types/IBlog';
-import { useMutation } from 'react-query';
 import { deletePostRequest } from '../backend/repositories/PostRepository';
 import { ApiError } from '../Types/IApiError';
 import { useAxios } from '../auth/AxiosProvider';

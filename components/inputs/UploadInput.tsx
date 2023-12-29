@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unused-prop-types */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable react/no-array-index-key */
 import { MouseEvent, useState, useCallback, useEffect } from 'react';
@@ -16,6 +17,7 @@ export type FileInput = {
 type UploadInputProps = {
   id: string;
   fileInputs: FileInput[];
+  isSingleFile?: boolean;
   setFileInputs: (arg0: FileInput[]) => void;
 };
 
@@ -33,12 +35,17 @@ function UploadThumb({ data, url }: FileInput) {
   );
 }
 
-function UploadInput({ id, fileInputs, setFileInputs }: UploadInputProps) {
-  const [fileInputsState, setFileInputsState] = useState<FileInput[]>([]);
+function UploadInput({
+  id,
+  fileInputs,
+  setFileInputs,
+  isSingleFile = false,
+}: UploadInputProps) {
+  // const [fileInputsState, setFileInputsState] = useState<FileInput[]>([]);
 
-  useEffect(() => {
-    setFileInputsState(fileInputs);
-  }, [fileInputs]);
+  // useEffect(() => {
+  //   setFileInputsState(fileInputs);
+  // }, [fileInputs]);
 
   const processFile = (file: File) => {
     const reader = new FileReader();
@@ -73,20 +80,24 @@ function UploadInput({ id, fileInputs, setFileInputs }: UploadInputProps) {
   );
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
-  const handleDeleteClick = (e: MouseEvent<HTMLButtonElement>) => {
-    const indexToDelete = (e.target as HTMLInputElement).value.toString();
-    const newState = fileInputsState.filter(
-      (inputs, i) => i !== parseInt(indexToDelete, 10)
-    );
-    setFileInputsState(newState);
-    setFileInputs(newState);
-  };
+  // const handleDeleteClick = (e: MouseEvent<HTMLButtonElement>) => {
+  //   const indexToDelete = (e.target as HTMLInputElement).value.toString();
+  //   const newState = fileInputsState.filter(
+  //     (inputs, i) => i !== parseInt(indexToDelete, 10)
+  //   );
+  //   setFileInputsState(newState);
+  //   setFileInputs(newState);
+  // };
   return (
     <>
       <div {...getRootProps()}>
         <input id={id} {...getInputProps()} />
 
-        <p>[Drag and drop some files here, or click to select files]</p>
+        {isSingleFile ? (
+          <p>[Drag and drop a file here, or click to select a file.]</p>
+        ) : (
+          <p>[Drag and drop some files here, or click to select files.]</p>
+        )}
       </div>
       <DndProvider backend={HTML5Backend}>
         <DraggableContainer<FileInput>

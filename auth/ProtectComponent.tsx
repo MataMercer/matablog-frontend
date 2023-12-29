@@ -1,6 +1,7 @@
 import React from 'react';
 import UserAuthority from '../Types/enums/UserAuthority';
 import IBlog from '../Types/IBlog';
+import IUser from '../Types/IUser';
 import { useAuth } from './AuthContext';
 
 type ProtectComponentProps = {
@@ -25,5 +26,6 @@ export default function ProtectComponent({
   ) {
     return null;
   }
+  // eslint-disable-next-line react/jsx-no-useless-fragment
   return <>{children}</>;
 }

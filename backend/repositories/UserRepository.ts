@@ -26,3 +26,8 @@ export async function loginRequest(
     return authTokenRes;
   });
 }
+
+export async function getCurrentUserRequest(axios: AxiosInstance) {
+  const response = await axios({ method: 'GET', url: '/user/currentuser' });
+  return response.data as IUser;
+}

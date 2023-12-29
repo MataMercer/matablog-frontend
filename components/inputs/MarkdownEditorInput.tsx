@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unused-prop-types */
 import React from 'react';
 import { Form, Row, Col } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';

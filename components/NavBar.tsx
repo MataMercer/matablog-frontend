@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import Link from 'next/link';
 import Router, { useRouter } from 'next/router';
 import styled from 'styled-components';
@@ -8,10 +9,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { createRef, useEffect, useMemo, useRef, useState } from 'react';
-import IUser from '../Types/IUser';
 import { useAuth } from '../auth/AuthContext';
-import useBlog from '../backend/hooks/blog/useBlog';
-import IBlog from '../Types/IBlog';
 import ErrorAlert from './ErrorAlert';
 import ProtectComponent from '../auth/ProtectComponent';
 import { Button } from './ui/Button';
@@ -22,7 +20,7 @@ import {
   DropdownMenu,
   DropdownToggle,
 } from './ui/Dropdown';
-import { getFileUrl, useFileUrl } from '../backend/repositories/FileRepository';
+import useCurrentUser from '../backend/hooks/user/useCurrentUser';
 
 const Nav = styled.nav`
   font-family: Arial, sans-serif;
@@ -46,7 +44,7 @@ const NavItem = styled.div`
   align-items: center;
   margin: 0px 10px 0px;
 `;
-const Brand = styled.a`
+const Brand = styled.div`
   display: flex;
   cursor: pointer;
 `;
@@ -69,19 +67,11 @@ const H1 = styled.h1`
 const IconText = styled.span`
   margin-left: 10px;
 `;
-interface AuthenticatedMenuProps {
-  blogId: string;
-}
-function AuthenticatedMenu({ blogId }: AuthenticatedMenuProps) {
+
+function AuthenticatedMenu() {
   const { logout } = useAuth();
-  const router = useRouter();
-  const { data: blog, status, error } = useBlog({ blogId });
-
-  const avatarUrl = useFileUrl(
-    blog?.blogProfile?.avatar?.id,
-    blog?.blogProfile?.avatar?.name
-  );
-
+  const { data: user, status, error } = useCurrentUser();
+  const blog = user?.activeBlog;
   if (!blog) {
     return <ErrorAlert error={error} />;
   }
@@ -100,7 +90,7 @@ function AuthenticatedMenu({ blogId }: AuthenticatedMenuProps) {
       <Dropdown>
         <DropdownToggle>
           <div>
-            <AvatarImage src={avatarUrl} alt="blogAvatar" />
+            <AvatarImage src={blog.blogProfile?.avatarUrl} alt="blogAvatar" />
             {`@${blog.blogName}`}
           </div>
         </DropdownToggle>
@@ -126,9 +116,7 @@ function UnauthenticatedMenu() {
   return (
     <NavItem>
       <Link href="/login">
-        <Button color="light">
-          <a>Login</a>
-        </Button>
+        <Button color="light">Login</Button>
       </Link>
     </NavItem>
   );
@@ -233,7 +221,7 @@ function Search({ className }: SearchProps) {
                 Router.push(`/post/${list[index].id}`);
                 setVal('');
                 setIndex(-1);
-                e.target.blur();
+                (e.target as HTMLElement).blur();
               } else {
                 Router.push(`/search`);
               }
@@ -264,7 +252,7 @@ function Search({ className }: SearchProps) {
   );
 }
 
-export default function NavBar({}) {
+export default function NavBar() {
   const { user } = useAuth();
   return (
     <header>
@@ -278,7 +266,7 @@ export default function NavBar({}) {
         <StyledSearch />
         <NavList>
           {user?.activeBlog.id ? (
-            <AuthenticatedMenu blogId={user.activeBlog.id} />
+            <AuthenticatedMenu />
           ) : (
             <UnauthenticatedMenu />
           )}

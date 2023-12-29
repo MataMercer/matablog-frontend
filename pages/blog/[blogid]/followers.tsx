@@ -32,7 +32,7 @@ export default function FollowersPage() {
   const followers = data?.content;
   return (
     <Layout title={title}>
-      <h1>@{blog?.blogName}'s Followers</h1>
+      <h1>@{blog?.blogName}`&apos`s Followers</h1>
       <p>
         Blogs that follow{' '}
         <Link href={`/blog/${blogid}`}>

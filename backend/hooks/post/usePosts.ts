@@ -2,9 +2,9 @@ import { ApiError } from 'next/dist/server/api-utils';
 import { useQuery } from 'react-query';
 import { IGetPostsForm } from '../../../Types/requestTypes/IGetPostsRequest';
 import { IPage } from '../../../Types/IPage';
-import IPost from '../../../Types/IPost';
 import { getPostsRequest } from '../../repositories/PostRepository';
 import { useAxios } from '../../../auth/AxiosProvider';
+import IPost from '../../../Types/IPost';
 
 type UsePostsProps = {
   getPostsForm: IGetPostsForm;

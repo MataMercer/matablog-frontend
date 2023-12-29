@@ -13,7 +13,7 @@ export interface CardProps<T> {
   onDeleteClick: (arg0: MouseEvent<HTMLButtonElement>) => void;
 }
 
-const StyledCard = styled.div`
+const StyledCard = styled.div<{ opacity: number }>`
   border: '1px dashed gray';
   padding: '0.5rem 1rem';
   marginbottom: '.5rem';
@@ -87,13 +87,13 @@ export function Card<T>({
     }),
   });
 
-  const CardComponent = cardComponent;
+  const CardComponent = cardComponent as any;
   const opacity = isDragging ? 0 : 1;
   drag(drop(ref));
   return (
     <StyledCard opacity={opacity} ref={ref} data-handler-id={handlerId}>
       <CardComponent {...data} />
-      <Button value={id} onClick={onDeleteClick}>
+      <Button variant="danger" value={id} onClick={onDeleteClick}>
         x
       </Button>
     </StyledCard>
